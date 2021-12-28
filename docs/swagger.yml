@@ -1,0 +1,34 @@
+openapi: 3.0.1
+info:
+  title: Q'n'A
+  version: 0.1.0
+  description: Q'n'A (traP Anonymous Question Box Service) API
+  contact:
+    name: Q'n'A dev team
+    url: https://github.com/logica0419/Q-n-A
+servers:
+  - url: http://localhost:9000/api
+    description: local
+
+tags:
+  - name: default
+    description: デフォルト API
+
+paths:
+  /ping:
+    get:
+      tags:
+        - default
+      summary: ping 送信
+      description: |-
+        サーバーに ping を送ります。  
+        正常にリクエストが成功すれば pong が返され、正しくサーバーが建ったことが確認されます。
+      parameters: []
+      responses:
+        200:
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: pong
