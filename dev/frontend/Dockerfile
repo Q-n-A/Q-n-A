@@ -1,4 +1,4 @@
-FROM node:16.13.1-alpine AS builder
+FROM node:17.3.0-alpine AS builder
 WORKDIR /build
 
 COPY ./Q-n-A_UI /build
