@@ -1,0 +1,58 @@
+version: "3"
+
+services:
+  backend:
+    container_name: Q-n-A_backend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    entrypoint: dockerize -timeout 60s -wait tcp://mariadb:3306
+    command: air
+    volumes:
+      - ..:/Q-n-A
+    restart: always
+    ports:
+      - "9000:9000"
+      - "9060:6060"
+    depends_on:
+      - mariadb
+
+  frontend:
+    container_name: Q-n-A_frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: always
+    volumes:
+      - ./frontend/Caddyfile:/etc/caddy/Caddyfile:ro
+    ports:
+      - "9001:80"
+    depends_on:
+      - backend
+
+  mariadb:
+    container_name: Q-n-A_mariadb
+    image: mariadb:latest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: Q-n-A
+    volumes:
+      - db:/var/lib/mysql
+
+  phpmyadmin:
+    container_name: Q-n-A_phpmyadmin
+    image: phpmyadmin/phpmyadmin:latest
+    restart: always
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_HOST=mariadb
+      - PMA_USER=root
+      - PMA_PASSWORD=password
+    ports:
+      - "9100:80"
+    depends_on:
+      - mariadb
+
+volumes:
+  db: null
