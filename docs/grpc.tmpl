@@ -1,0 +1,117 @@
+# gRPC API仕様書
+
+## インデックス
+
+- API仕様書
+  - [Services](#Services)
+  {{range .Files}}{{if .HasServices}}
+    {{$file_name := .Name}}
+    - [{{.Name}}](#{{.Name}})
+    {{range .Services}}
+      - [{{.Name}}](#{{.FullName}})
+    {{end}}
+  {{end}}{{end}}
+
+  - [Messages](#Messages)
+  {{range .Files}}{{if .HasMessages}}
+    {{$file_name := .Name}}
+    - [{{.Name}}](#{{.Name}})
+    {{range .Messages}}
+      - [{{.LongName}}](#{{.FullName}})
+    {{end}}
+  {{end}}{{end}}
+
+  - [Enums](#Enums)
+  {{range .Files}}{{if .HasEnums}}
+    {{$file_name := .Name}}
+    - [{{.Name}}](#{{.Name}})
+    {{range .Enums}}
+      - [{{.LongName}}](#{{.FullName}})
+    {{end}}
+  {{end}}{{end}}
+
+  - [Extensions](#Extensions)
+  {{range .Files}}{{if .HasExtensions}}
+    {{$file_name := .Name}}
+    - [{{.Name}}](#{{.Name}})
+    {{range .Extensions}}
+      - [File-level Extensions](#{{$file_name}}-extensions)
+    {{end}}
+  {{end}}{{end}}
+
+- [スカラー値型](#スカラー値型)
+
+## API仕様
+
+### Services
+{{range .Files}}{{if .HasServices}}
+  #### {{.Name}}
+  {{.Description}}
+  {{range .Services}}
+  - {{.Name}}
+  {{.Description}}
+    | Method Name | Request Type | Response Type | Description |
+    | ----------- | ------------ | ------------- | ------------|
+    {{range .Methods -}}
+    | {{.Name}} | [{{.RequestLongType}}](#{{.RequestFullType}}){{if .RequestStreaming}} stream{{end}} | [{{.ResponseLongType}}](#{{.ResponseFullType}}){{if .ResponseStreaming}} stream{{end}} | {{nobr .Description}} |
+    {{end}}
+  {{end}}
+{{end}}{{end}} <!-- end services -->
+
+### Messages
+{{range .Files}}{{if .HasMessages}}
+  #### {{.Name}}
+  {{.Description}}
+  {{range .Messages}}
+  - {{.LongName}}
+  {{.Description}}
+    {{if .HasFields}}
+    | Field | Type | Label | Description |
+    | ----- | ---- | ----- | ----------- |
+    {{range .Fields -}}
+    | {{.Name}} | [{{.LongType}}](#{{.FullType}}) | {{.Label}} | {{nobr .Description}}{{if .DefaultValue}} Default: {{.DefaultValue}}{{end}} |
+    {{end}}
+  {{end}}
+  {{if .HasExtensions}}
+    | Extension | Type | Base | Number | Description |
+    | --------- | ---- | ---- | ------ | ----------- |
+    {{range .Extensions -}}
+      | {{.Name}} | {{.LongType}} | {{.ContainingLongType}} | {{.Number}} | {{nobr .Description}}{{if .DefaultValue}} Default: {{.DefaultValue}}{{end}} |
+    {{end}}
+  {{end}}
+  {{end}}
+{{end}}{{end}}<!-- end messages -->
+
+### Enums
+{{range .Files}}{{if .HasEnums}}
+  #### {{.Name}}
+  {{.Description}}
+  {{range .Enums}}
+  - {{.LongName}}
+  {{.Description}}
+    | Name | Number | Description |
+    | ---- | ------ | ----------- |
+    {{range .Values -}}
+    | {{.Name}} | {{.Number}} | {{nobr .Description}} |
+    {{end}}
+  {{end}}
+{{end}}{{end}}<!-- end enums -->
+
+### File-level Extensions
+{{range .Files}}{{if .HasExtensions}}
+  #### {{.Name}}
+  {{.Description}}
+    | Extension | Type | Base | Number | Description |
+    | --------- | ---- | ---- | ------ | ----------- |
+    {{range .Extensions -}}
+    | {{.Name}} | {{.LongType}} | {{.ContainingLongType}} | {{.Number}} | {{nobr .Description}}{{if .DefaultValue}} Default: `{{.DefaultValue}}`{{end}} |
+    {{end}}
+{{end}}{{end}} <!-- end HasExtensions -->
+
+## スカラー値型
+
+| .proto Type | Notes | Go Type | C++ Type | Java Type | Python Type |
+| ----------- | ----- | -------- | -------- | --------- | ----------- |
+{{range .Scalars -}}
+  | <a name="{{.ProtoType}}" /> {{.ProtoType}} | {{.Notes}} | {{.GoType}} | {{.CppType}} | {{.JavaType}} | {{.PythonType}} |
+{{end}}
