@@ -1,4 +1,4 @@
-module github.com/Q-n-A-dev-team/Q-n-A
+module github.com/Q-n-A/Q-n-A
 
 go 1.17
 
