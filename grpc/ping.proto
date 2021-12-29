@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package grpc;
+
+import "google/protobuf/empty.proto";
+
+option go_package = "github.com/Q-n-A/Q-n-A/router/grpc";
+
+service Ping { rpc Ping(google.protobuf.Empty) returns (PingResponse); }
+
+message PingResponse { string message = 1; }
