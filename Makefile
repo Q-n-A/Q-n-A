@@ -50,12 +50,12 @@ prune: ## Delete redundant images and volumes
 	@docker image prune -a && docker volume prune
 
 .PHONY: tbls
-tbls:
+tbls: ## Generate tbls DB docs
 	@rm -rf docs/db_schema
 	@cd docs && tbls doc
 
 .PHONY: grpc
-grpc: grpc-go grpc-doc
+grpc: grpc-go grpc-doc ## Generate gRPC auto-gen files (go & docs)
 
 .PHONY: grpc-go
 grpc-go:
