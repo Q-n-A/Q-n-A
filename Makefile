@@ -59,9 +59,9 @@ grpc: grpc-go grpc-doc ## Generate gRPC auto-gen files (go & docs)
 
 .PHONY: grpc-go
 grpc-go:
-	@rm -rf router/grpc
-	@mkdir -p router/grpc
-	@protoc -I . --go_out=router --go_opt=paths=source_relative --go-grpc_out=router --go-grpc_opt=paths=source_relative grpc/**/*.proto
+	@rm -rf server/grpc
+	@mkdir -p server/grpc
+	@protoc -I . --go_out=server --go_opt=paths=source_relative --go-grpc_out=server --go-grpc_opt=paths=source_relative grpc/**/*.proto
 
 .PHONY: grpc-doc
 grpc-doc:
