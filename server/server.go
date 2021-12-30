@@ -6,6 +6,9 @@ import (
 
 	"github.com/Q-n-A/Q-n-A/server/grpc/ping"
 	"github.com/Q-n-A/Q-n-A/server/ping_impl"
+	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
+	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
@@ -23,7 +26,13 @@ func NewServer(pingService *ping_impl.PingService) *Server {
 }
 
 func newGRPCServer() *grpc.Server {
-	s := grpc.NewServer()
+	logger, _ := zap.NewProduction()
+
+	s := grpc.NewServer(
+		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
+			grpc_zap.UnaryServerInterceptor(logger),
+		)),
+	)
 
 	reflection.Register(s)
 
