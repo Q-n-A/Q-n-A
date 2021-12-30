@@ -2,14 +2,18 @@ package main
 
 import (
 	"fmt"
+	"log"
 
-	"github.com/Q-n-A/Q-n-A/router"
+	"github.com/Q-n-A/Q-n-A/server"
 )
 
 func main() {
-	fmt.Print("Q'n'A - traP Anonymous Question Box Service")
+	fmt.Println("Q'n'A - traP Anonymous Question Box Service")
 
-	e := router.Setup()
+	s, err := server.InjectServer()
+	if err != nil {
+		log.Panicf("failed to setup gRPC server: %v", err)
+	}
 
-	e.Logger.Panic(e.Start(":9000"))
+	s.Run()
 }
