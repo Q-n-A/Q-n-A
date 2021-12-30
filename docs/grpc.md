@@ -6,7 +6,7 @@
   - [Services](#Services)
   
     
-    - [grpc/ping.proto](#grpc/ping.proto)
+    - [grpc/ping/ping.proto](#grpc/ping/ping.proto)
     
       - [Ping](#grpc.Ping)
     
@@ -15,7 +15,7 @@
   - [Messages](#Messages)
   
     
-    - [grpc/ping.proto](#grpc/ping.proto)
+    - [grpc/ping/ping.proto](#grpc/ping/ping.proto)
     
       - [PingResponse](#grpc.PingResponse)
     
@@ -33,7 +33,7 @@
 
 ### Services
 
-  #### grpc/ping.proto
+  #### grpc/ping/ping.proto
   
   
   - Ping
@@ -47,7 +47,7 @@
 
 ### Messages
 
-  #### grpc/ping.proto
+  #### grpc/ping/ping.proto
   
   
   - PingResponse
