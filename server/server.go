@@ -15,13 +15,19 @@ type Server struct {
 }
 
 func NewServer(pingService *ping_impl.PingService) *Server {
-	s := grpc.NewServer()
+	s := newGRPCServer()
 
 	ping.RegisterPingServer(s, pingService)
 
+	return &Server{s: s}
+}
+
+func newGRPCServer() *grpc.Server {
+	s := grpc.NewServer()
+
 	reflection.Register(s)
 
-	return &Server{s: s}
+	return s
 }
 
 func (s *Server) Run() {
