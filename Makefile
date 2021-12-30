@@ -71,6 +71,14 @@ grpc-go:
 grpc-doc:
 	@protoc -I . --doc_out=docs/grpc.tmpl,grpc.md:docs grpc/**/*.proto
 
+.PHONY: grpc-list
+grpc-list:
+	@grpcurl -plaintext :9000 list
+
+.PHONY: grpc-ping
+grpc-ping:
+	@grpcurl -plaintext :9000 grpc.Ping/Ping
+
 .PHONY: chown
 chown:
 	$(eval name := $(shell whoami))
