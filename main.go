@@ -1,16 +1,18 @@
 package main
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/Q-n-A/Q-n-A/server"
+	"go.uber.org/zap"
 )
 
 func main() {
-	fmt.Println("Q'n'A - traP Anonymous Question Box Service")
+	logger, _ := zap.NewProduction()
 
-	s, err := server.InjectServer()
+	logger.Info("Q'n'A - traP Anonymous Question Box Service")
+
+	s, err := server.InjectServer(logger)
 	if err != nil {
 		log.Panicf("failed to setup gRPC server: %v", err)
 	}

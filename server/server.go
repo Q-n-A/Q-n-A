@@ -14,20 +14,22 @@ import (
 )
 
 type Server struct {
-	s *grpc.Server
+	s      *grpc.Server
+	logger *zap.Logger
 }
 
-func NewServer(pingService *ping_impl.PingService) *Server {
-	s := newGRPCServer()
+func NewServer(logger *zap.Logger, pingService *ping_impl.PingService) *Server {
+	s := newGRPCServer(logger)
 
 	ping.RegisterPingServer(s, pingService)
 
-	return &Server{s: s}
+	return &Server{
+		s:      s,
+		logger: logger,
+	}
 }
 
-func newGRPCServer() *grpc.Server {
-	logger, _ := zap.NewProduction()
-
+func newGRPCServer(logger *zap.Logger) *grpc.Server {
 	s := grpc.NewServer(
 		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
 			grpc_zap.UnaryServerInterceptor(logger),
@@ -45,7 +47,7 @@ func (s *Server) Run() {
 		log.Panicf("failed to setup Listener: %v", err)
 	}
 
-	log.Println("starting gRPC server on port 9000")
+	s.logger.Info("starting gRPC server on port 9000")
 
 	if err := s.s.Serve(lis); err != nil {
 		log.Panicf("failed to run gRPC server: %v", err)

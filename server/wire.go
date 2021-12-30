@@ -6,6 +6,7 @@ package server
 import (
 	"github.com/Q-n-A/Q-n-A/server/ping_impl"
 	"github.com/google/wire"
+	"go.uber.org/zap"
 )
 
 var serverSet = wire.NewSet(
@@ -13,7 +14,7 @@ var serverSet = wire.NewSet(
 	NewServer,
 )
 
-func InjectServer() (*Server, error) {
+func InjectServer(*zap.Logger) (*Server, error) {
 	wire.Build(serverSet)
 	return nil, nil
 }

@@ -9,13 +9,14 @@ package server
 import (
 	"github.com/Q-n-A/Q-n-A/server/ping_impl"
 	"github.com/google/wire"
+	"go.uber.org/zap"
 )
 
 // Injectors from wire.go:
 
-func InjectServer() (*Server, error) {
+func InjectServer(logger *zap.Logger) (*Server, error) {
 	pingService := ping_impl.NewPingService()
-	server := NewServer(pingService)
+	server := NewServer(logger, pingService)
 	return server, nil
 }
 
