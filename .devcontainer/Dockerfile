@@ -5,6 +5,7 @@ FROM logica0419/protoc-go:1.1.0 AS builder
 RUN go install github.com/cosmtrek/air@latest
 RUN go install github.com/google/wire/cmd/wire@latest
 RUN go get github.com/k1LoW/tbls
+RUN go install github.com/fullstorydev/grpcurl/cmd/grpcurl@latest
 
 FROM logica0419/protoc-go:1.1.0 AS devcontainer
 
@@ -18,3 +19,4 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
 COPY --from=builder /go/bin/air /usr/local/bin/
 COPY --from=builder /go/bin/wire /usr/local/bin/
 COPY --from=builder /go/bin/tbls /usr/local/bin/
+COPY --from=builder /go/bin/grpcurl /usr/local/bin/
