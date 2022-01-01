@@ -2,18 +2,17 @@ package server
 
 import (
 	"fmt"
-	"log"
 	"net"
 
 	"github.com/Q-n-A/Q-n-A/server/protobuf"
-	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
-	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
+	"github.com/gorilla/sessions"
+	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/reflection"
 )
 
 type Server struct {
+	e      *echo.Echo
 	s      *grpc.Server
 	logger *zap.Logger
 	c      *Config
@@ -24,39 +23,34 @@ type Config struct {
 	RESTPort int
 }
 
-func NewServer(logger *zap.Logger, Config *Config, pingServer protobuf.PingServer) *Server {
+func newServer(Config *Config, logger *zap.Logger, store sessions.Store, pingService protobuf.PingServer) *Server {
 	s := newGRPCServer(logger)
+	setupServices(s, pingService)
 
-	protobuf.RegisterPingServer(s, pingServer)
+	e := newEcho(store)
+	setupHandlers(e, s)
 
 	return &Server{
+		e:      e,
 		s:      s,
 		logger: logger,
 		c:      Config,
 	}
 }
 
-func newGRPCServer(logger *zap.Logger) *grpc.Server {
-	s := grpc.NewServer(
-		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
-			grpc_zap.UnaryServerInterceptor(logger),
-		)),
-	)
-
-	reflection.Register(s)
-
-	return s
-}
-
 func (s *Server) Run() {
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", s.c.GRPCPort))
 	if err != nil {
-		log.Panicf("failed to setup Listener: %v", err)
+		s.logger.Panic("failed to setup Listener", zap.Error(err))
 	}
 
 	s.logger.Info("starting gRPC server on port " + fmt.Sprintf("%d", s.c.GRPCPort))
 
-	if err := s.s.Serve(lis); err != nil {
-		log.Panicf("failed to run gRPC server: %v", err)
-	}
+	go func() {
+		if err := s.s.Serve(lis); err != nil {
+			s.logger.Panic("failed to run gRPC server", zap.Error(err))
+		}
+	}()
+
+	s.e.Logger.Panic(s.e.Start(fmt.Sprintf(":%d", s.c.RESTPort)))
 }
