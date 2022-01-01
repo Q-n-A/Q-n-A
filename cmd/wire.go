@@ -12,6 +12,9 @@ import (
 )
 
 var serverSet = wire.NewSet(
+	wire.Value([]zap.Option{}),
+	zap.NewProduction,
+
 	ping.NewPingService,
 	wire.Bind(new(protobuf.PingServer), new(*ping.PingService)),
 
@@ -19,7 +22,7 @@ var serverSet = wire.NewSet(
 	server.NewServer,
 )
 
-func SetupServer(config *Config, logger *zap.Logger) (*server.Server, error) {
+func SetupServer(config *Config) (*server.Server, error) {
 	wire.Build(serverSet)
 	return nil, nil
 }

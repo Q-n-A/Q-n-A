@@ -4,7 +4,6 @@ import (
 	"log"
 
 	"github.com/spf13/cobra"
-	"go.uber.org/zap"
 )
 
 var (
@@ -25,11 +24,8 @@ var serveCmd = &cobra.Command{
 			cfg.RESTPort = restPort
 		}
 
-		// ロガーを生成
-		logger, _ := zap.NewProduction()
-
 		// wireを使ってサーバーを生成
-		s, err := SetupServer(cfg, logger)
+		s, err := SetupServer(cfg)
 		if err != nil {
 			log.Panicf("failed to setup gRPC server: %v", err)
 		}

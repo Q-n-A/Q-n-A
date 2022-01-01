@@ -16,13 +16,22 @@ import (
 
 // Injectors from wire.go:
 
-func SetupServer(config *Config, logger *zap.Logger) (*server.Server, error) {
+func SetupServer(config *Config) (*server.Server, error) {
+	v := _wireValue
+	logger, err := zap.NewProduction(v...)
+	if err != nil {
+		return nil, err
+	}
 	serverConfig := provideServerConfig(config)
 	pingService := ping.NewPingService()
 	serverServer := server.NewServer(logger, serverConfig, pingService)
 	return serverServer, nil
 }
 
+var (
+	_wireValue = []zap.Option{}
+)
+
 // wire.go:
 
-var serverSet = wire.NewSet(ping.NewPingService, wire.Bind(new(protobuf.PingServer), new(*ping.PingService)), provideServerConfig, server.NewServer)
+var serverSet = wire.NewSet(wire.Value([]zap.Option{}), zap.NewProduction, ping.NewPingService, wire.Bind(new(protobuf.PingServer), new(*ping.PingService)), provideServerConfig, server.NewServer)
