@@ -14,9 +14,17 @@ lint: ## Lint go files
 build: ## Build binary
 	@go build -o Q-n-A ./*.go
 
-.PHONY: run
-run: ## Run Q'n'A directly
-	@go run ./*.go
+.PHONY: serve
+serve: ## Run Q'n'A server directly
+	@go run ./*.go serve
+
+.PHONY: healthcheck
+healthcheck: ## Healthcheck Q'n'A server
+	@go run ./*.go healthcheck
+
+.PHONY: config
+config: ## Display current server configuration
+	@go run ./*.go config
 
 .PHONY: up
 up: ## Build and start Q'n'A hot reload environment
