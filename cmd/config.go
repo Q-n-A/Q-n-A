@@ -18,8 +18,8 @@ var cfg = &Config{}
 type Config struct {
 	ClientID        string `mapstructure:"client_id" json:"client_id,omitempty"`               // 本番環境向けのクライアントID (default: "")
 	DevClientID     string `mapstructure:"dev_client_id" json:"dev_client_id,omitempty"`       // ローカル開発環境向けのクライアントID (default: "")
-	RESTPort        int    `mapstructure:"rest_port" json:"rest_port,omitempty"`               // REST APIサーバーのポート番号 (default: 9000)
 	GRPCPort        int    `mapstructure:"grpc_port" json:"grpc_port,omitempty"`               // gRPCサーバーのポート番号 (default: 9001)
+	RESTPort        int    `mapstructure:"rest_port" json:"rest_port,omitempty"`               // REST APIサーバーのポート番号 (default: 9000)
 	MariaDBHostname string `mapstructure:"mariadb_hostname" json:"mariadb_hostname,omitempty"` // DBのホスト (default: "mariadb")
 	MariaDBPort     int    `mapstructure:"mariadb_port" json:"mariadb_port,omitempty"`         // DBのポート番号 (default: 3306)
 	MariaDBUsername string `mapstructure:"mariadb_username" json:"mariadb_username,omitempty"` // DBのユーザー名 (default: "root")
@@ -51,8 +51,8 @@ func loadConfig(cfgFile string) error {
 	// デフォルト値の設定
 	viper.SetDefault("client_id", "")
 	viper.SetDefault("dev_client_id", "")
-	viper.SetDefault("rest_port", 9000)
 	viper.SetDefault("grpc_port", 9001)
+	viper.SetDefault("rest_port", 9000)
 	viper.SetDefault("mariadb_hostname", "mariadb")
 	viper.SetDefault("mariadb_port", 3306)
 	viper.SetDefault("mariadb_username", "root")
