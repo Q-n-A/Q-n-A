@@ -54,7 +54,7 @@ func (s *Server) Run() {
 		log.Panicf("failed to setup Listener: %v", err)
 	}
 
-	s.logger.Info("starting gRPC server on port 9000")
+	s.logger.Info("starting gRPC server on port " + fmt.Sprintf("%d", s.c.GRPCPort))
 
 	if err := s.s.Serve(lis); err != nil {
 		log.Panicf("failed to run gRPC server: %v", err)
