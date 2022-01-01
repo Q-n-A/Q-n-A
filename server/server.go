@@ -4,8 +4,8 @@ import (
 	"log"
 	"net"
 
-	"github.com/Q-n-A/Q-n-A/server/grpc/ping"
-	"github.com/Q-n-A/Q-n-A/server/ping_impl"
+	"github.com/Q-n-A/Q-n-A/server/ping"
+	"github.com/Q-n-A/Q-n-A/server/protobuf"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
 	"go.uber.org/zap"
@@ -18,10 +18,10 @@ type Server struct {
 	logger *zap.Logger
 }
 
-func NewServer(logger *zap.Logger, pingService *ping_impl.PingService) *Server {
+func NewServer(logger *zap.Logger, pingService *ping.PingService) *Server {
 	s := newGRPCServer(logger)
 
-	ping.RegisterPingServer(s, pingService)
+	protobuf.RegisterPingServer(s, pingService)
 
 	return &Server{
 		s:      s,

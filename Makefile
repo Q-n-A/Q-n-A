@@ -63,13 +63,13 @@ grpc: grpc-go grpc-doc ## Generate gRPC auto-gen files (go & docs)
 
 .PHONY: grpc-go
 grpc-go:
-	@rm -rf server/grpc
-	@mkdir -p server/grpc
-	@protoc -I . --go_out=server --go_opt=paths=source_relative --go-grpc_out=server --go-grpc_opt=paths=source_relative grpc/**/*.proto
+	@rm -rf server/protobuf
+	@mkdir -p server/protobuf
+	@protoc -I . --go_out=server --go_opt=paths=source_relative --go-grpc_out=server --go-grpc_opt=paths=source_relative protobuf/*.proto
 
 .PHONY: grpc-doc
 grpc-doc:
-	@protoc -I . --doc_out=docs/grpc.tmpl,grpc.md:docs grpc/**/*.proto
+	@protoc -I . --doc_out=docs/grpc.tmpl,grpc.md:docs protobuf/*.proto
 
 .PHONY: grpc-list
 grpc-list:

@@ -4,7 +4,7 @@ package grpc;
 
 import "google/protobuf/empty.proto";
 
-option go_package = "github.com/Q-n-A/Q-n-A/server/grpc/ping";
+option go_package = "github.com/Q-n-A/Q-n-A/server/protobuf";
 
 service Ping { rpc Ping(google.protobuf.Empty) returns (PingResponse); }
 

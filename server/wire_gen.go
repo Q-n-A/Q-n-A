@@ -7,7 +7,7 @@
 package server
 
 import (
-	"github.com/Q-n-A/Q-n-A/server/ping_impl"
+	"github.com/Q-n-A/Q-n-A/server/ping"
 	"github.com/google/wire"
 	"go.uber.org/zap"
 )
@@ -15,11 +15,11 @@ import (
 // Injectors from wire.go:
 
 func InjectServer(logger *zap.Logger) (*Server, error) {
-	pingService := ping_impl.NewPingService()
+	pingService := ping.NewPingService()
 	server := NewServer(logger, pingService)
 	return server, nil
 }
 
 // wire.go:
 
-var serverSet = wire.NewSet(ping_impl.NewPingService, NewServer)
+var serverSet = wire.NewSet(ping.NewPingService, NewServer)

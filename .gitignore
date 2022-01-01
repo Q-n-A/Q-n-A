@@ -2,4 +2,4 @@ Q-n-A
 .vscode/
 tmp/
 dev/frontend/Q-n-A_UI/
-server/grpc/
+server/protobuf/
