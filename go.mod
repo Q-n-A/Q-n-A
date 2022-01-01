@@ -3,6 +3,7 @@ module github.com/Q-n-A/Q-n-A
 go 1.17
 
 require (
+	github.com/davecgh/go-spew v1.1.1
 	github.com/fatih/color v1.13.0
 	github.com/google/wire v0.5.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
