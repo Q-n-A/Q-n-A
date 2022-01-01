@@ -1,9 +1,11 @@
 package cmd
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"log"
+	"net/http"
 
 	"github.com/Q-n-A/Q-n-A/server/protobuf"
 	"github.com/spf13/cobra"
@@ -41,7 +43,25 @@ var healthcheckCmd = &cobra.Command{
 			log.Panicf("failed to ping gRPC server: %v", err)
 		}
 		if res.GetMessage() != "pong" {
-			log.Panicf("unexpected response from gRPC server: %v", res)
+			log.Panicf("unexpected response from gRPC server: %v", res.GetMessage())
+		}
+
+		// REST APIサーバーの`/api/ping`にGETリクエストを送信
+		res2, err := http.DefaultClient.Get(fmt.Sprintf("http://localhost:%d/api/ping", cfg.RESTPort))
+		if err != nil {
+			log.Panicf("failed to ping REST API server: %v", err)
+		}
+		defer res2.Body.Close()
+		if res2.StatusCode != http.StatusOK {
+			log.Panicf("unexpected status code: %d", res2.StatusCode)
+		}
+		buf := new(bytes.Buffer)
+		_, err = buf.ReadFrom(res2.Body)
+		if err != nil {
+			log.Panicf("failed to unmarshal REST API responce: %v", err)
+		}
+		if buf.String() != "pong" {
+			log.Panicf("unexpected response from REST API server: %s", buf.String())
 		}
 
 		fmt.Println("Healthcheck OK")
