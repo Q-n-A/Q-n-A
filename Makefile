@@ -56,6 +56,7 @@ tbls: ## Generate tbls DB docs
 
 .PHONY: wire
 wire: ## Generate wire auto-gen file
+	@cd server && wire
 	@cd cmd && wire
 
 .PHONY: grpc
