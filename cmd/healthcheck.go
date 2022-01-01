@@ -17,6 +17,14 @@ var healthcheckCmd = &cobra.Command{
 	Use:   "healthcheck",
 	Short: "Server healthcheck",
 	Run: func(cmd *cobra.Command, args []string) {
+		// フラグによる設定の上書き
+		if gRPCPort != 0 {
+			cfg.GRPCPort = gRPCPort
+		}
+		if restPort != 0 {
+			cfg.RESTPort = restPort
+		}
+
 		// gRPCコネクションを作成
 		conn, err := grpc.Dial(fmt.Sprintf(":%d", cfg.GRPCPort), grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {
@@ -42,4 +50,6 @@ var healthcheckCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(healthcheckCmd)
+	healthcheckCmd.Flags().IntVarP(&gRPCPort, "grpc_port", "g", 0, "gRPC Port to dial")
+	healthcheckCmd.Flags().IntVarP(&restPort, "rest_port", "r", 0, "REST API Port to dial")
 }
