@@ -1,10 +1,10 @@
 package server
 
 import (
+	"fmt"
 	"log"
 	"net"
 
-	"github.com/Q-n-A/Q-n-A/server/ping"
 	"github.com/Q-n-A/Q-n-A/server/protobuf"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
@@ -16,16 +16,23 @@ import (
 type Server struct {
 	s      *grpc.Server
 	logger *zap.Logger
+	c      *Config
 }
 
-func NewServer(logger *zap.Logger, pingService *ping.PingService) *Server {
+type Config struct {
+	GRPCPort int
+	RESTPort int
+}
+
+func NewServer(logger *zap.Logger, Config *Config, pingServer protobuf.PingServer) *Server {
 	s := newGRPCServer(logger)
 
-	protobuf.RegisterPingServer(s, pingService)
+	protobuf.RegisterPingServer(s, pingServer)
 
 	return &Server{
 		s:      s,
 		logger: logger,
+		c:      Config,
 	}
 }
 
@@ -42,7 +49,7 @@ func newGRPCServer(logger *zap.Logger) *grpc.Server {
 }
 
 func (s *Server) Run() {
-	lis, err := net.Listen("tcp", ":9000")
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", s.c.GRPCPort))
 	if err != nil {
 		log.Panicf("failed to setup Listener: %v", err)
 	}
