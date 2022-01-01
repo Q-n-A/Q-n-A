@@ -4,9 +4,8 @@
 package cmd
 
 import (
+	"github.com/Q-n-A/Q-n-A/repository"
 	"github.com/Q-n-A/Q-n-A/server"
-	"github.com/Q-n-A/Q-n-A/server/ping"
-	"github.com/Q-n-A/Q-n-A/server/protobuf"
 	"github.com/google/wire"
 	"go.uber.org/zap"
 )
@@ -15,11 +14,13 @@ var serverSet = wire.NewSet(
 	wire.Value([]zap.Option{}),
 	zap.NewProduction,
 
-	ping.NewPingService,
-	wire.Bind(new(protobuf.PingServer), new(*ping.PingService)),
+	provideRepositoryConfig,
+	repository.NewGormRepository,
+	wire.Bind(new(repository.Repository), new(*repository.GormRepository)),
+	repository.GetSqlDB,
 
 	provideServerConfig,
-	server.NewServer,
+	server.InjectServer,
 )
 
 func SetupServer(config *Config) (*server.Server, error) {

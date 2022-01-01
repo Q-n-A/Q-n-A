@@ -7,9 +7,8 @@
 package cmd
 
 import (
+	"github.com/Q-n-A/Q-n-A/repository"
 	"github.com/Q-n-A/Q-n-A/server"
-	"github.com/Q-n-A/Q-n-A/server/ping"
-	"github.com/Q-n-A/Q-n-A/server/protobuf"
 	"github.com/google/wire"
 	"go.uber.org/zap"
 )
@@ -17,14 +16,25 @@ import (
 // Injectors from wire.go:
 
 func SetupServer(config *Config) (*server.Server, error) {
+	serverConfig := provideServerConfig(config)
+	repositoryConfig := provideRepositoryConfig(config)
 	v := _wireValue
 	logger, err := zap.NewProduction(v...)
 	if err != nil {
 		return nil, err
 	}
-	serverConfig := provideServerConfig(config)
-	pingService := ping.NewPingService()
-	serverServer := server.NewServer(logger, serverConfig, pingService)
+	gormRepository, err := repository.NewGormRepository(repositoryConfig, logger)
+	if err != nil {
+		return nil, err
+	}
+	db, err := repository.GetSqlDB(gormRepository)
+	if err != nil {
+		return nil, err
+	}
+	serverServer, err := server.InjectServer(serverConfig, db, logger)
+	if err != nil {
+		return nil, err
+	}
 	return serverServer, nil
 }
 
@@ -34,4 +44,4 @@ var (
 
 // wire.go:
 
-var serverSet = wire.NewSet(wire.Value([]zap.Option{}), zap.NewProduction, ping.NewPingService, wire.Bind(new(protobuf.PingServer), new(*ping.PingService)), provideServerConfig, server.NewServer)
+var serverSet = wire.NewSet(wire.Value([]zap.Option{}), zap.NewProduction, provideRepositoryConfig, repository.NewGormRepository, wire.Bind(new(repository.Repository), new(*repository.GormRepository)), repository.GetSqlDB, provideServerConfig, server.InjectServer)
