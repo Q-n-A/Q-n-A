@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/Q-n-A/Q-n-A/repository"
 	"github.com/Q-n-A/Q-n-A/server"
 	"github.com/davecgh/go-spew/spew"
 	"github.com/spf13/cobra"
@@ -24,6 +25,17 @@ type Config struct {
 	MariaDBUsername string `mapstructure:"mariadb_username" json:"mariadb_username,omitempty"` // DBのユーザー名 (default: "root")
 	MariaDBPassword string `mapstructure:"mariadb_password" json:"mariadb_password,omitempty"` // DBのパスワード (default: "password")
 	MariaDBDatabase string `mapstructure:"mariadb_database" json:"mariadb_database,omitempty"` // DBのDB名 (default: "Q-n-A")
+}
+
+// リポジトリ用設定の提供
+func provideRepositoryConfig(c *Config) *repository.Config {
+	return &repository.Config{
+		MariaDBHostname: c.MariaDBHostname,
+		MariaDBPort:     c.MariaDBPort,
+		MariaDBUsername: c.MariaDBUsername,
+		MariaDBPassword: c.MariaDBPassword,
+		MariaDBDatabase: c.MariaDBDatabase,
+	}
 }
 
 // サーバー用設定の提供
