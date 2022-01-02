@@ -14,6 +14,8 @@ import (
 
 func newEcho(sessions.Store) *echo.Echo {
 	e := echo.New()
+	e.HideBanner = true
+
 	// ログの設定
 	e.Logger.SetLevel(log.DEBUG)
 	e.Logger.SetHeader("${time_rfc3339} ${prefix} ${short_file} ${line} |")
@@ -41,6 +43,4 @@ func setupHandlers(e *echo.Echo, s *grpc.Server) {
 			return c.String(200, "pong")
 		})
 	}
-
-	e.GET("/grpc", echo.WrapHandler(convertGRPCServer(s)))
 }

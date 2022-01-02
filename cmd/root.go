@@ -47,31 +47,31 @@ func printBanner() {
 	// デカ文字部
 	fmt.Print(
 		color.HiBlueString(`   ____`),
-		color.WhiteString(`  _       _  `),
+		color.HiWhiteString(`  _       _  `),
 		color.HiRedString(`___`),
 	)
 	fmt.Println()
 	fmt.Print(
 		color.HiBlueString(`  / __ \`),
-		color.WhiteString(`( )____ ( )`),
+		color.HiWhiteString(`( )____ ( )`),
 		color.HiRedString(`/   |`),
 	)
 	fmt.Println()
 	fmt.Print(
 		color.HiBlueString(` / / / /`),
-		color.WhiteString(`|// __ \|/`),
+		color.HiWhiteString(`|// __ \|/`),
 		color.HiRedString(`/ /| |`),
 	)
 	fmt.Println()
 	fmt.Print(
 		color.HiBlueString(`/ /_/ /`),
-		color.WhiteString(`  / / / / `),
+		color.HiWhiteString(`  / / / / `),
 		color.HiRedString(`/ ___ |`),
 	)
 	fmt.Println()
 	fmt.Print(
 		color.HiBlueString(`\___\_\`),
-		color.WhiteString(` /_/ /_/ `),
+		color.HiWhiteString(` /_/ /_/ `),
 		color.HiRedString(`/_/  |_|`),
 	)
 	fmt.Println()
