@@ -6,8 +6,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    entrypoint: dockerize -timeout 60s -wait tcp://mariadb:3306
-    command: air
     volumes:
       - ..:/Q-n-A
     restart: always
