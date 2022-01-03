@@ -82,11 +82,11 @@ grpc-doc:
 
 .PHONY: grpc-list
 grpc-list:
-	@grpcurl -plaintext :9000 list
+	@grpcurl -plaintext :9001 list
 
 .PHONY: grpc-ping
 grpc-ping:
-	@grpcurl -plaintext :9000 grpc.Ping/Ping
+	@grpcurl -plaintext :9001 grpc.Ping/Ping
 
 .PHONY: chown
 chown:
