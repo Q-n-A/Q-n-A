@@ -20,3 +20,6 @@ COPY --from=builder /go/bin/air /usr/local/bin/
 COPY --from=builder /go/bin/wire /usr/local/bin/
 COPY --from=builder /go/bin/tbls /usr/local/bin/
 COPY --from=builder /go/bin/grpcurl /usr/local/bin/
+
+EXPOSE 9090
+EXPOSE 9001

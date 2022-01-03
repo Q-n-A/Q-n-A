@@ -10,8 +10,8 @@ services:
       - ..:/Q-n-A
     restart: always
     ports:
-      - "9000:9000"
-      - "9060:6060"
+      - "9001:9001"
+      - "9002:6060"
     depends_on:
       - mariadb
 
@@ -23,10 +23,19 @@ services:
     restart: always
     volumes:
       - ./frontend/Caddyfile:/etc/caddy/Caddyfile:ro
-    ports:
-      - "9001:80"
     depends_on:
       - backend
+
+  router:
+    container_name: Q-n-A_router
+    image: envoyproxy/envoy-alpine:v1.20-latest
+    volumes:
+      - ./router/envoy.yaml:/etc/envoy/envoy.yaml:ro
+    ports:
+      - "9000:80"
+    depends_on:
+      - backend
+      - frontend
 
   mariadb:
     container_name: Q-n-A_mariadb
@@ -48,7 +57,7 @@ services:
       - PMA_USER=root
       - PMA_PASSWORD=password
     ports:
-      - "9100:80"
+      - "9003:80"
     depends_on:
       - mariadb
 
