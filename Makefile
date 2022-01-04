@@ -35,7 +35,7 @@ down: ## Stop and remove hot reload environment
 	@cd dev && docker-compose down
 
 .PHONY: reset-frontend
-reset-frontend: stop-front rm-front delete-front-image re-clone-frontend ## Delete frontend container and image completely
+reset-frontend: stop-front rm-front delete-front-image re-clone-frontend ## Delete frontend image and re-clone frontend repo to update frontend container
 
 .PHONY: re-clone-frontend
 re-clone-frontend:
@@ -78,14 +78,14 @@ grpc-go:
 
 .PHONY: grpc-doc
 grpc-doc:
-	@protoc -I . --doc_out=docs/grpc.tmpl,grpc.md:docs protobuf/*.proto
+	@protoc -I . --doc_out=docs/settings/grpc.tmpl,grpc.md:docs/api protobuf/*.proto
 
 .PHONY: grpc-list
-grpc-list:
+grpc-list: ## List up gRPC services
 	@grpcurl -plaintext :9001 list
 
 .PHONY: grpc-ping
-grpc-ping:
+grpc-ping: ## Ping to gRPC server
 	@grpcurl -plaintext :9001 grpc.Ping/Ping
 
 .PHONY: chown

@@ -1,8 +1,8 @@
-# gRPC API仕様書
+# gRPC サービス仕様書
 
 ## インデックス
 
-- API仕様書
+- サービス仕様書
   - [Services](#Services)
   
     
@@ -33,33 +33,33 @@
 
 ### Services
 
-  #### protobuf/ping.proto
+#### protobuf/ping.proto
+
+
+- Ping
+
+  | Method Name | Request Type | Response Type | Description |
+  | ----------- | ------------ | ------------- | ------------|
+  | Ping | [.google.protobuf.Empty](#google.protobuf.Empty) | [PingResponse](#grpc.PingResponse) |  |
   
-  
-  - Ping
-  
-    | Method Name | Request Type | Response Type | Description |
-    | ----------- | ------------ | ------------- | ------------|
-    | Ping | [.google.protobuf.Empty](#google.protobuf.Empty) | [PingResponse](#grpc.PingResponse) |  |
-    
-  
+
  <!-- end services -->
 
 ### Messages
 
-  #### protobuf/ping.proto
+#### protobuf/ping.proto
+
+
+- PingResponse
+
   
+  | Field | Type | Label | Description |
+  | ----- | ---- | ----- | ----------- |
+  | message | [string](#string) |  |  |
   
-  - PingResponse
-  
-    
-    | Field | Type | Label | Description |
-    | ----- | ---- | ----- | ----------- |
-    | message | [string](#string) |  |  |
-    
-  
-  
-  
+
+
+
 <!-- end messages -->
 
 ### Enums
