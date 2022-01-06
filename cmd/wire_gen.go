@@ -13,7 +13,7 @@ import (
 	"go.uber.org/zap"
 )
 
-// Injectors from wire.go:
+// Injectors from serve_wire.go:
 
 func SetupServer(config *Config) (*server.Server, error) {
 	serverConfig := provideServerConfig(config)
@@ -42,6 +42,6 @@ var (
 	_wireValue = []zap.Option{}
 )
 
-// wire.go:
+// serve_wire.go:
 
 var serverSet = wire.NewSet(wire.Value([]zap.Option{}), zap.NewProduction, provideRepositoryConfig, repository.NewGormRepository, wire.Bind(new(repository.Repository), new(*repository.GormRepository)), repository.GetSqlDB, provideServerConfig, server.InjectServer)

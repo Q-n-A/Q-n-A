@@ -14,7 +14,7 @@ import (
 	"go.uber.org/zap"
 )
 
-// Injectors from wire.go:
+// Injectors from server_wire.go:
 
 func InjectServer(config *Config, db *sql.DB, logger *zap.Logger) (*Server, error) {
 	store, err := newMySQLStore(db)
@@ -26,7 +26,7 @@ func InjectServer(config *Config, db *sql.DB, logger *zap.Logger) (*Server, erro
 	return server, nil
 }
 
-// wire.go:
+// server_wire.go:
 
 var serverSet = wire.NewSet(ping.NewPingService, wire.Bind(new(protobuf.PingServer), new(*ping.PingService)), newMySQLStore,
 	newServer,
