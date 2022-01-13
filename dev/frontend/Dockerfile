@@ -1,4 +1,4 @@
-FROM logica0419/protoc-node:16.13.1 AS builder
+FROM logica0419/protoc-node:16.13.2 AS builder
 WORKDIR /build
 
 COPY ./Q-n-A_UI /build
