@@ -12,7 +12,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-func newEcho(sessions.Store) *echo.Echo {
+func newEcho(store sessions.Store) *echo.Echo {
 	e := echo.New()
 	e.HideBanner = true
 
@@ -22,7 +22,7 @@ func newEcho(sessions.Store) *echo.Echo {
 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{Format: "${time_rfc3339} method = ${method} | uri = ${uri} | status = ${status} ${error}\n"}))
 
 	// セッションの設定
-	e.Use(session.Middleware(sessions.NewCookieStore([]byte("secret-key"))))
+	e.Use(session.Middleware(store))
 
 	return e
 }
