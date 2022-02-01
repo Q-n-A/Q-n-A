@@ -12,7 +12,7 @@ import (
 )
 
 // 新しいEchoインスタンスを生成
-func newEcho(store sessions.Store, logger *zap.Logger) *echo.Echo {
+func NewEcho(store sessions.Store, logger *zap.Logger) *echo.Echo {
 	e := echo.New()
 
 	// Echo起動時のログを無効化
@@ -42,7 +42,7 @@ func registerHandlers(e *echo.Echo) {
 }
 
 // 新しいMySQLセッションストアを生成
-func newMySQLStore(db *sql.DB) (sessions.Store, error) {
+func NewMySQLStore(db *sql.DB) (sessions.Store, error) {
 	store, err := mysqlstore.NewMySQLStoreFromConnection(db, "sessions", "/", 60*60*24*14, []byte("secret-key"))
 	if err != nil {
 		return nil, err

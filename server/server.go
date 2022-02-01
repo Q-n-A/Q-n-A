@@ -23,7 +23,7 @@ type Config struct {
 }
 
 // 新しいサーバーを生成
-func newServer(e *echo.Echo, s *grpc.Server, logger *zap.Logger, Config *Config) *Server {
+func NewServer(e *echo.Echo, s *grpc.Server, logger *zap.Logger, Config *Config) *Server {
 	return &Server{
 		e:      e,
 		s:      s,

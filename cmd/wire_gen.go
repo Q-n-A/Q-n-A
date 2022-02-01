@@ -10,6 +10,8 @@ import (
 	"github.com/Q-n-A/Q-n-A/repository"
 	"github.com/Q-n-A/Q-n-A/repository/gorm2"
 	"github.com/Q-n-A/Q-n-A/server"
+	"github.com/Q-n-A/Q-n-A/server/ping"
+	"github.com/Q-n-A/Q-n-A/server/protobuf"
 	"github.com/google/wire"
 )
 
@@ -17,31 +19,35 @@ import (
 	_ "net/http/pprof"
 )
 
-// Injectors from serve_wire.go:
+// Injectors from wire.go:
 
 func setupServer(config *Config) (*server.Server, error) {
-	serverConfig := provideServerConfig(config)
 	gorm2Config := provideRepositoryConfig(config)
 	logger := newLogger(config)
-	gormRepository, err := gorm2.NewGormRepository(gorm2Config, logger)
+	gorm2Repository, err := gorm2.NewGorm2Repository(gorm2Config, logger)
 	if err != nil {
 		return nil, err
 	}
-	db, err := gorm2.GetSqlDB(gormRepository)
+	db, err := gorm2.GetSqlDB(gorm2Repository)
 	if err != nil {
 		return nil, err
 	}
-	serverServer, err := server.InjectServer(serverConfig, db, logger)
+	store, err := server.NewMySQLStore(db)
 	if err != nil {
 		return nil, err
 	}
+	echo := server.NewEcho(store, logger)
+	pingService := ping.NewPingService()
+	grpcServer := server.NewGRPCServer(logger, pingService)
+	serverConfig := provideServerConfig(config)
+	serverServer := server.NewServer(echo, grpcServer, logger, serverConfig)
 	return serverServer, nil
 }
 
-// serve_wire.go:
+// wire.go:
 
 var serverSet = wire.NewSet(
 	newLogger,
 
-	provideRepositoryConfig, gorm2.NewGormRepository, wire.Bind(new(repository.Repository), new(*gorm2.Gorm2Repository)), gorm2.GetSqlDB, provideServerConfig, server.InjectServer,
+	provideRepositoryConfig, gorm2.NewGorm2Repository, wire.Bind(new(repository.Repository), new(*gorm2.Gorm2Repository)), gorm2.GetSqlDB, ping.NewPingService, wire.Bind(new(protobuf.PingServer), new(*ping.PingService)), server.NewMySQLStore, server.NewEcho, server.NewGRPCServer, provideServerConfig, server.NewServer,
 )

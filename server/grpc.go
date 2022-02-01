@@ -10,7 +10,7 @@ import (
 )
 
 // 新しいgRPCサーバーを生成
-func newGRPCServer(logger *zap.Logger, pingService protobuf.PingServer) *grpc.Server {
+func NewGRPCServer(logger *zap.Logger, pingService protobuf.PingServer) *grpc.Server {
 	// loggerを使いgRPCサーバーを生成
 	s := grpc.NewServer(
 		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(

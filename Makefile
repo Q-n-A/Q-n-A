@@ -62,13 +62,12 @@ tbls: ## Generate tbls DB docs
 	@rm -rf docs/db_schema
 	@cd docs && tbls doc
 
-.PHONY: wire
-wire: ## Generate wire auto-gen file
-	@cd server && wire
-	@cd cmd && wire
+.PHONY: gen
+gen: ## Generate go auto-gen files
+	@GOFLAGS=-mod=mod go generate ./...
 
 .PHONY: grpc
-grpc: grpc-go grpc-doc ## Generate gRPC auto-gen files (go & docs)
+grpc: grpc-go grpc-doc ## Generate gRPC auto-gen files
 
 .PHONY: grpc-go
 grpc-go:
