@@ -2,13 +2,17 @@ package cmd
 
 import (
 	"log"
+	"net/http"
+	_ "net/http/pprof"
 
+	"github.com/felixge/fgprof"
 	"github.com/spf13/cobra"
 )
 
 var (
-	gRPCPort int = 0
-	restPort int = 0
+	gRPCAddr string = ""
+	restAddr string = ""
+	devMode  bool   = false
 )
 
 // Serveコマンド - Q'n'Aサーバーの起動
@@ -17,17 +21,35 @@ var serveCmd = &cobra.Command{
 	Short: "Run Q'n'A server",
 	Run: func(cmd *cobra.Command, args []string) {
 		// フラグによる設定の上書き
-		if gRPCPort != 0 {
-			cfg.GRPCPort = gRPCPort
+		if gRPCAddr != "" {
+			cfg.GRPCAddr = gRPCAddr
 		}
-		if restPort != 0 {
-			cfg.RESTPort = restPort
+		if restAddr != "" {
+			cfg.RESTAddr = restAddr
+		}
+		if devMode {
+			cfg.DevMode = true
 		}
 
 		// wireを使ってサーバーを生成
-		s, err := SetupServer(cfg)
+		s, err := setupServer(cfg)
 		if err != nil {
-			log.Panicf("failed to setup gRPC server: %v", err)
+			log.Panicf("failed to setup server: %v", err)
+		}
+
+		// DevModeがtrueならfgprofサーバーを起動
+		if cfg.DevMode {
+			go func() {
+				// ハンドラを登録
+				http.DefaultServeMux.Handle("/debug/fgprof", fgprof.Handler())
+
+				// サーバーを起動
+				log.Print("Starting fgprof server")
+				err := http.ListenAndServe(":6060", nil)
+				if err != nil {
+					log.Panicf("failed to start fgprof server: %v", err)
+				}
+			}()
 		}
 
 		// サーバーを起動
@@ -37,6 +59,7 @@ var serveCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(serveCmd)
-	serveCmd.Flags().IntVarP(&gRPCPort, "grpc_port", "g", 0, "gRPC Port to listen")
-	serveCmd.Flags().IntVarP(&restPort, "rest_port", "r", 0, "REST API Port to listen")
+	serveCmd.Flags().StringVarP(&gRPCAddr, "grpc_port", "g", "", "gRPC address to listen")
+	serveCmd.Flags().StringVarP(&restAddr, "rest_port", "r", "", "REST API address to listen")
+	serveCmd.Flags().BoolVarP(&devMode, "dev", "d", false, "Development mode")
 }

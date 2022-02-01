@@ -3,30 +3,45 @@ package server
 import (
 	"database/sql"
 
+	"github.com/brpaz/echozap"
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
-	"github.com/labstack/gommon/log"
 	"github.com/srinathgs/mysqlstore"
-	"google.golang.org/grpc"
+	"go.uber.org/zap"
 )
 
-func newEcho(store sessions.Store) *echo.Echo {
+// 新しいEchoインスタンスを生成
+func newEcho(store sessions.Store, logger *zap.Logger) *echo.Echo {
 	e := echo.New()
-	e.HideBanner = true
 
-	// ログの設定
-	e.Logger.SetLevel(log.DEBUG)
-	e.Logger.SetHeader("${time_rfc3339} ${prefix} ${short_file} ${line} |")
-	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{Format: "${time_rfc3339} method = ${method} | uri = ${uri} | status = ${status} ${error}\n"}))
+	// Echo起動時のログを無効化
+	e.HideBanner = true
+	e.HidePort = true
+
+	// loggerの設定
+	e.Use(echozap.ZapLogger(logger))
 
 	// セッションの設定
 	e.Use(session.Middleware(store))
 
+	// ハンドラを登録
+	registerHandlers(e)
+
 	return e
 }
 
+// ハンドラをEchoインスタンスに登録
+func registerHandlers(e *echo.Echo) {
+	api := e.Group("/api")
+	{
+		api.GET("/ping", func(c echo.Context) error {
+			return c.String(200, "pong")
+		})
+	}
+}
+
+// 新しいMySQLセッションストアを生成
 func newMySQLStore(db *sql.DB) (sessions.Store, error) {
 	store, err := mysqlstore.NewMySQLStoreFromConnection(db, "sessions", "/", 60*60*24*14, []byte("secret-key"))
 	if err != nil {
@@ -34,13 +49,4 @@ func newMySQLStore(db *sql.DB) (sessions.Store, error) {
 	}
 
 	return store, nil
-}
-
-func setupHandlers(e *echo.Echo, s *grpc.Server) {
-	api := e.Group("/api")
-	{
-		api.GET("/ping", func(c echo.Context) error {
-			return c.String(200, "pong")
-		})
-	}
 }

@@ -8,26 +8,26 @@ package cmd
 
 import (
 	"github.com/Q-n-A/Q-n-A/repository"
+	"github.com/Q-n-A/Q-n-A/repository/gorm2"
 	"github.com/Q-n-A/Q-n-A/server"
 	"github.com/google/wire"
-	"go.uber.org/zap"
+)
+
+import (
+	_ "net/http/pprof"
 )
 
 // Injectors from serve_wire.go:
 
-func SetupServer(config *Config) (*server.Server, error) {
+func setupServer(config *Config) (*server.Server, error) {
 	serverConfig := provideServerConfig(config)
-	repositoryConfig := provideRepositoryConfig(config)
-	v := _wireValue
-	logger, err := zap.NewProduction(v...)
+	gorm2Config := provideRepositoryConfig(config)
+	logger := newLogger(config)
+	gormRepository, err := gorm2.NewGormRepository(gorm2Config, logger)
 	if err != nil {
 		return nil, err
 	}
-	gormRepository, err := repository.NewGormRepository(repositoryConfig, logger)
-	if err != nil {
-		return nil, err
-	}
-	db, err := repository.GetSqlDB(gormRepository)
+	db, err := gorm2.GetSqlDB(gormRepository)
 	if err != nil {
 		return nil, err
 	}
@@ -38,10 +38,10 @@ func SetupServer(config *Config) (*server.Server, error) {
 	return serverServer, nil
 }
 
-var (
-	_wireValue = []zap.Option{}
-)
-
 // serve_wire.go:
 
-var serverSet = wire.NewSet(wire.Value([]zap.Option{}), zap.NewProduction, provideRepositoryConfig, repository.NewGormRepository, wire.Bind(new(repository.Repository), new(*repository.GormRepository)), repository.GetSqlDB, provideServerConfig, server.InjectServer)
+var serverSet = wire.NewSet(
+	newLogger,
+
+	provideRepositoryConfig, gorm2.NewGormRepository, wire.Bind(new(repository.Repository), new(*gorm2.Gorm2Repository)), gorm2.GetSqlDB, provideServerConfig, server.InjectServer,
+)

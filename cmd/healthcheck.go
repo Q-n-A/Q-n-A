@@ -20,15 +20,15 @@ var healthcheckCmd = &cobra.Command{
 	Short: "Server healthcheck",
 	Run: func(cmd *cobra.Command, args []string) {
 		// フラグによる設定の上書き
-		if gRPCPort != 0 {
-			cfg.GRPCPort = gRPCPort
+		if gRPCAddr != "" {
+			cfg.GRPCAddr = gRPCAddr
 		}
-		if restPort != 0 {
-			cfg.RESTPort = restPort
+		if restAddr != "" {
+			cfg.RESTAddr = restAddr
 		}
 
 		// gRPCコネクションを作成
-		conn, err := grpc.Dial(fmt.Sprintf(":%d", cfg.GRPCPort), grpc.WithTransportCredentials(insecure.NewCredentials()))
+		conn, err := grpc.Dial(cfg.GRPCAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {
 			log.Panicf("failed to dial too gRPC server: %v", err)
 		}
@@ -37,7 +37,7 @@ var healthcheckCmd = &cobra.Command{
 		// Pingサービスのクライアントを作成
 		pingClient := protobuf.NewPingClient(conn)
 
-		// Pingメソッドを実行
+		// Pingメソッドを呼び出し
 		res, err := pingClient.Ping(context.Background(), &emptypb.Empty{})
 		if err != nil {
 			log.Panicf("failed to ping gRPC server: %v", err)
@@ -47,16 +47,16 @@ var healthcheckCmd = &cobra.Command{
 		}
 
 		// REST APIサーバーの`/api/ping`にGETリクエストを送信
-		res2, err := http.DefaultClient.Get(fmt.Sprintf("http://localhost:%d/api/ping", cfg.RESTPort))
+		res2, err := http.DefaultClient.Get(fmt.Sprintf("http://%s/api/ping", cfg.RESTAddr))
 		if err != nil {
 			log.Panicf("failed to ping REST API server: %v", err)
 		}
-		defer res2.Body.Close()
 		if res2.StatusCode != http.StatusOK {
 			log.Panicf("unexpected status code: %d", res2.StatusCode)
 		}
 		buf := new(bytes.Buffer)
 		_, err = buf.ReadFrom(res2.Body)
+		defer res2.Body.Close()
 		if err != nil {
 			log.Panicf("failed to unmarshal REST API responce: %v", err)
 		}
@@ -70,6 +70,6 @@ var healthcheckCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(healthcheckCmd)
-	healthcheckCmd.Flags().IntVarP(&gRPCPort, "grpc_port", "g", 0, "gRPC Port to dial")
-	healthcheckCmd.Flags().IntVarP(&restPort, "rest_port", "r", 0, "REST API Port to dial")
+	healthcheckCmd.Flags().StringVarP(&gRPCAddr, "grpc_port", "g", "", "gRPC address to dial")
+	healthcheckCmd.Flags().StringVarP(&restAddr, "rest_port", "r", "", "REST API address to dial")
 }

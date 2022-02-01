@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/Q-n-A/Q-n-A/repository"
+	"github.com/Q-n-A/Q-n-A/repository/gorm2"
 	"github.com/Q-n-A/Q-n-A/server"
 	"github.com/davecgh/go-spew/spew"
 	"github.com/spf13/cobra"
@@ -16,10 +16,11 @@ var cfg = &Config{}
 
 // 設定
 type Config struct {
+	DevMode         bool   `mapstructure:"dev_mode" json:"dev_mode,omitempty"`                 // 開発モード (default: false)
 	ClientID        string `mapstructure:"client_id" json:"client_id,omitempty"`               // 本番環境向けのクライアントID (default: "")
 	DevClientID     string `mapstructure:"dev_client_id" json:"dev_client_id,omitempty"`       // ローカル開発環境向けのクライアントID (default: "")
-	GRPCPort        int    `mapstructure:"grpc_port" json:"grpc_port,omitempty"`               // gRPCサーバーのポート番号 (default: 9001)
-	RESTPort        int    `mapstructure:"rest_port" json:"rest_port,omitempty"`               // REST APIサーバーのポート番号 (default: 9000)
+	GRPCAddr        string `mapstructure:"grpc_addr" json:"grpc_addr,omitempty"`               // gRPCサーバーがリッスンするアドレス (default: :9001)
+	RESTAddr        string `mapstructure:"rest_addr" json:"rest_addr,omitempty"`               // REST APIサーバーがリッスンするアドレス (default: :9000)
 	MariaDBHostname string `mapstructure:"mariadb_hostname" json:"mariadb_hostname,omitempty"` // DBのホスト (default: "mariadb")
 	MariaDBPort     int    `mapstructure:"mariadb_port" json:"mariadb_port,omitempty"`         // DBのポート番号 (default: 3306)
 	MariaDBUsername string `mapstructure:"mariadb_username" json:"mariadb_username,omitempty"` // DBのユーザー名 (default: "root")
@@ -27,9 +28,9 @@ type Config struct {
 	MariaDBDatabase string `mapstructure:"mariadb_database" json:"mariadb_database,omitempty"` // DBのDB名 (default: "Q-n-A")
 }
 
-// リポジトリ用設定の提供
-func provideRepositoryConfig(c *Config) *repository.Config {
-	return &repository.Config{
+// Gorm v2リポジトリ用設定の提供
+func provideRepositoryConfig(c *Config) *gorm2.Config {
+	return &gorm2.Config{
 		MariaDBHostname: c.MariaDBHostname,
 		MariaDBPort:     c.MariaDBPort,
 		MariaDBUsername: c.MariaDBUsername,
@@ -41,18 +42,19 @@ func provideRepositoryConfig(c *Config) *repository.Config {
 // サーバー用設定の提供
 func provideServerConfig(c *Config) *server.Config {
 	return &server.Config{
-		GRPCPort: c.GRPCPort,
-		RESTPort: c.RESTPort,
+		GRPCAddr: c.GRPCAddr,
+		RESTAddr: c.RESTAddr,
 	}
 }
 
 // 設定を読み込む
 func loadConfig(cfgFile string) error {
 	// デフォルト値の設定
+	viper.SetDefault("dev_mode", false)
 	viper.SetDefault("client_id", "")
 	viper.SetDefault("dev_client_id", "")
-	viper.SetDefault("grpc_port", 9001)
-	viper.SetDefault("rest_port", 9000)
+	viper.SetDefault("grpc_addr", ":9001")
+	viper.SetDefault("rest_addr", ":9000")
 	viper.SetDefault("mariadb_hostname", "mariadb")
 	viper.SetDefault("mariadb_port", 3306)
 	viper.SetDefault("mariadb_username", "root")

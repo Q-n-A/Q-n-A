@@ -17,6 +17,9 @@ var serverSet = wire.NewSet(
 	wire.Bind(new(protobuf.PingServer), new(*ping.PingService)),
 
 	newMySQLStore,
+	newEcho,
+	newGRPCServer,
+
 	newServer,
 )
 

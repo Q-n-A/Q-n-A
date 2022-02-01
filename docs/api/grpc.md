@@ -8,7 +8,7 @@
     
     - [protobuf/ping.proto](#protobuf/ping.proto)
     
-      - [Ping](#grpc.Ping)
+      - [Ping](#ping.Ping)
     
   
 
@@ -17,7 +17,7 @@
     
     - [protobuf/ping.proto](#protobuf/ping.proto)
     
-      - [PingResponse](#grpc.PingResponse)
+      - [PingResponse](#ping.PingResponse)
     
   
 
@@ -40,7 +40,7 @@
 
   | Method Name | Request Type | Response Type | Description |
   | ----------- | ------------ | ------------- | ------------|
-  | Ping | [.google.protobuf.Empty](#google.protobuf.Empty) | [PingResponse](#grpc.PingResponse) |  |
+  | Ping | [.google.protobuf.Empty](#google.protobuf.Empty) | [PingResponse](#ping.PingResponse) |  |
   
 
  <!-- end services -->

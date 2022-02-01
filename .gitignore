@@ -3,3 +3,4 @@ Q-n-A
 tmp/
 dev/frontend/Q-n-A_UI/
 server/protobuf/
+config.json

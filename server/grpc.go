@@ -9,18 +9,25 @@ import (
 	"google.golang.org/grpc/reflection"
 )
 
-func newGRPCServer(logger *zap.Logger) *grpc.Server {
+// 新しいgRPCサーバーを生成
+func newGRPCServer(logger *zap.Logger, pingService protobuf.PingServer) *grpc.Server {
+	// loggerを使いgRPCサーバーを生成
 	s := grpc.NewServer(
 		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
 			grpc_zap.UnaryServerInterceptor(logger),
 		)),
 	)
 
+	// reflectionを有効にする
 	reflection.Register(s)
+
+	// サービスを登録
+	registerServices(s, pingService)
 
 	return s
 }
 
-func setupServices(s *grpc.Server, pingService protobuf.PingServer) {
+// サービスを登録
+func registerServices(s *grpc.Server, pingService protobuf.PingServer) {
 	protobuf.RegisterPingServer(s, pingService)
 }

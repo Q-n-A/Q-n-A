@@ -9,6 +9,6 @@ import (
 func main() {
 	err := cmd.Execute()
 	if err != nil {
-		log.Panicf("failed to start Q-n-A: %v", err)
+		log.Panicf("failed to start Q'n'A application: %v", err)
 	}
 }

@@ -1,16 +1,14 @@
 package server
 
 import (
-	"fmt"
 	"net"
 
-	"github.com/Q-n-A/Q-n-A/server/protobuf"
-	"github.com/gorilla/sessions"
 	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 )
 
+// サーバー
 type Server struct {
 	e      *echo.Echo
 	s      *grpc.Server
@@ -18,18 +16,14 @@ type Server struct {
 	c      *Config
 }
 
+// サーバー用設定
 type Config struct {
-	GRPCPort int
-	RESTPort int
+	GRPCAddr string
+	RESTAddr string
 }
 
-func newServer(Config *Config, logger *zap.Logger, store sessions.Store, pingService protobuf.PingServer) *Server {
-	s := newGRPCServer(logger)
-	setupServices(s, pingService)
-
-	e := newEcho(store)
-	setupHandlers(e, s)
-
+// 新しいサーバーを生成
+func newServer(e *echo.Echo, s *grpc.Server, logger *zap.Logger, Config *Config) *Server {
 	return &Server{
 		e:      e,
 		s:      s,
@@ -38,19 +32,24 @@ func newServer(Config *Config, logger *zap.Logger, store sessions.Store, pingSer
 	}
 }
 
+// サーバーを起動
 func (s *Server) Run() {
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", s.c.GRPCPort))
+	// gRPC用リスナーの作成
+	lis, err := net.Listen("tcp", s.c.GRPCAddr)
 	if err != nil {
 		s.logger.Panic("failed to setup Listener", zap.Error(err))
 	}
 
-	s.logger.Info("starting gRPC server on port " + fmt.Sprintf("%d", s.c.GRPCPort))
-
+	// goroutineでgRPCサーバーを起動
 	go func() {
+		s.logger.Info("Starting gRPC server on " + s.c.GRPCAddr)
 		if err := s.s.Serve(lis); err != nil {
 			s.logger.Panic("failed to run gRPC server", zap.Error(err))
 		}
 	}()
 
-	s.e.Logger.Panic(s.e.Start(fmt.Sprintf(":%d", s.c.RESTPort)))
+	// REST APIサーバーを起動
+	s.logger.Info("Starting REST API server on " + s.c.GRPCAddr)
+	err = s.e.Start(s.c.RESTAddr)
+	s.logger.Panic("failed to run REST API server", zap.Error(err))
 }

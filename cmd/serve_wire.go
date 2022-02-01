@@ -5,25 +5,24 @@ package cmd
 
 import (
 	"github.com/Q-n-A/Q-n-A/repository"
+	"github.com/Q-n-A/Q-n-A/repository/gorm2"
 	"github.com/Q-n-A/Q-n-A/server"
 	"github.com/google/wire"
-	"go.uber.org/zap"
 )
 
 var serverSet = wire.NewSet(
-	wire.Value([]zap.Option{}),
-	zap.NewProduction,
+	newLogger,
 
 	provideRepositoryConfig,
-	repository.NewGormRepository,
-	wire.Bind(new(repository.Repository), new(*repository.GormRepository)),
-	repository.GetSqlDB,
+	gorm2.NewGormRepository,
+	wire.Bind(new(repository.Repository), new(*gorm2.GormRepository)),
+	gorm2.GetSqlDB,
 
 	provideServerConfig,
 	server.InjectServer,
 )
 
-func SetupServer(config *Config) (*server.Server, error) {
+func setupServer(config *Config) (*server.Server, error) {
 	wire.Build(serverSet)
 	return nil, nil
 }

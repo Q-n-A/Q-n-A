@@ -6,3 +6,7 @@ dsn: mariadb://root:password@mariadb:3306/Q-n-A
 # Path to generate document
 # Default is `dbdoc`
 docPath: ./db_schema
+
+# tables to exclude from doc
+exclude:
+  - session

@@ -1,7 +1,7 @@
 openapi: 3.0.1
 info:
   title: Q'n'A
-  version: 0.1.0
+  version: 0.0.0
   description: Q'n'A (traP Anonymous Question Box Service) API
   contact:
     name: Q'n'A dev team
@@ -9,6 +9,8 @@ info:
 servers:
   - url: http://localhost:9000/api
     description: local
+  - url: https://dev-q-n-a.trap.games/api
+    description: development
 
 tags:
   - name: default

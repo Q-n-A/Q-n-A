@@ -21,13 +21,18 @@ func InjectServer(config *Config, db *sql.DB, logger *zap.Logger) (*Server, erro
 	if err != nil {
 		return nil, err
 	}
+	echo := newEcho(store, logger)
 	pingService := ping.NewPingService()
-	server := newServer(config, logger, store, pingService)
-	return server, nil
+	server := newGRPCServer(logger, pingService)
+	serverServer := newServer(echo, server, logger, config)
+	return serverServer, nil
 }
 
 // server_wire.go:
 
 var serverSet = wire.NewSet(ping.NewPingService, wire.Bind(new(protobuf.PingServer), new(*ping.PingService)), newMySQLStore,
+	newEcho,
+	newGRPCServer,
+
 	newServer,
 )
