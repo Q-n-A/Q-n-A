@@ -9,30 +9,34 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "daily"
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 50
 
   - package-ecosystem: "docker" # See documentation for possible values
     directory: "/" # Location of package manifests
     schedule:
       interval: "daily"
+    open-pull-requests-limit: 50
 
   - package-ecosystem: "docker" # See documentation for possible values
     directory: "/.devcontainer" # Location of package manifests
     schedule:
       interval: "daily"
+    open-pull-requests-limit: 50
 
   - package-ecosystem: "docker" # See documentation for possible values
     directory: "/dev" # Location of package manifests
     schedule:
       interval: "daily"
+    open-pull-requests-limit: 50
 
   - package-ecosystem: "docker" # See documentation for possible values
     directory: "/dev/frontend" # Location of package manifests
     schedule:
       interval: "daily"
+    open-pull-requests-limit: 50
 
   - package-ecosystem: "github-actions" # See documentation for possible values
     directory: "/" # Location of package manifests
     schedule:
       interval: "daily"
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 50
