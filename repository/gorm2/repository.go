@@ -26,7 +26,7 @@ type Config struct {
 }
 
 // Gorm2Repositoryを生成
-func NewGormRepository(c *Config, logger *zap.Logger) (*Gorm2Repository, error) {
+func NewGorm2Repository(c *Config, logger *zap.Logger) (*Gorm2Repository, error) {
 	db, err := newDBConnection(c, logger)
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to db :%w", err)
