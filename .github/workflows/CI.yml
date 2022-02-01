@@ -100,11 +100,11 @@ jobs:
           path: ./server/protobuf
           key: protobuf-${{ hashFiles('**/*.proto') }}
       - name: Build
-        run: go build -o ./HiQidas
+        run: go build -o ./Q-n-A
       - uses: actions/upload-artifact@v2.3.1
         with:
-          name: HiQidas
-          path: ./HiQidas
+          name: Q-n-A
+          path: ./Q-n-A
   test:
     name: Test
     runs-on: ubuntu-latest
