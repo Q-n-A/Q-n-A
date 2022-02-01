@@ -1,4 +1,4 @@
-package cmd
+package logger
 
 import (
 	"os"
@@ -7,8 +7,13 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
+// logger用設定
+type Config struct {
+	DevMode bool
+}
+
 // loggerを生成
-func newLogger(c *Config) *zap.Logger {
+func NewZapLogger(c *Config) *zap.Logger {
 	// EncoderConfigの生成
 	var encoderConfig zapcore.EncoderConfig
 	if c.DevMode {

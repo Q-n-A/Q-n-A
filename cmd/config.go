@@ -6,6 +6,7 @@ import (
 
 	"github.com/Q-n-A/Q-n-A/repository/gorm2"
 	"github.com/Q-n-A/Q-n-A/server"
+	"github.com/Q-n-A/Q-n-A/util/logger"
 	"github.com/davecgh/go-spew/spew"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -44,6 +45,12 @@ func provideServerConfig(c *Config) *server.Config {
 	return &server.Config{
 		GRPCAddr: c.GRPCAddr,
 		RESTAddr: c.RESTAddr,
+	}
+}
+
+func provideLoggerConfig(c *Config) *logger.Config {
+	return &logger.Config{
+		DevMode: c.DevMode,
 	}
 }
 

@@ -11,11 +11,13 @@ import (
 	"github.com/Q-n-A/Q-n-A/server"
 	"github.com/Q-n-A/Q-n-A/server/ping"
 	"github.com/Q-n-A/Q-n-A/server/protobuf"
+	"github.com/Q-n-A/Q-n-A/util/logger"
 	"github.com/google/wire"
 )
 
 var serverSet = wire.NewSet(
-	newLogger,
+	provideLoggerConfig,
+	logger.NewZapLogger,
 
 	provideRepositoryConfig,
 	gorm2.NewGorm2Repository,

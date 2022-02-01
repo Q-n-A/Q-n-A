@@ -12,6 +12,7 @@ import (
 	"github.com/Q-n-A/Q-n-A/server"
 	"github.com/Q-n-A/Q-n-A/server/ping"
 	"github.com/Q-n-A/Q-n-A/server/protobuf"
+	"github.com/Q-n-A/Q-n-A/util/logger"
 	"github.com/google/wire"
 )
 
@@ -23,8 +24,9 @@ import (
 
 func setupServer(config *Config) (*server.Server, error) {
 	gorm2Config := provideRepositoryConfig(config)
-	logger := newLogger(config)
-	gorm2Repository, err := gorm2.NewGorm2Repository(gorm2Config, logger)
+	loggerConfig := provideLoggerConfig(config)
+	zapLogger := logger.NewZapLogger(loggerConfig)
+	gorm2Repository, err := gorm2.NewGorm2Repository(gorm2Config, zapLogger)
 	if err != nil {
 		return nil, err
 	}
@@ -36,18 +38,16 @@ func setupServer(config *Config) (*server.Server, error) {
 	if err != nil {
 		return nil, err
 	}
-	echo := server.NewEcho(store, logger)
+	echo := server.NewEcho(store, zapLogger)
 	pingService := ping.NewPingService()
-	grpcServer := server.NewGRPCServer(logger, pingService)
+	grpcServer := server.NewGRPCServer(zapLogger, pingService)
 	serverConfig := provideServerConfig(config)
-	serverServer := server.NewServer(echo, grpcServer, logger, serverConfig)
+	serverServer := server.NewServer(echo, grpcServer, zapLogger, serverConfig)
 	return serverServer, nil
 }
 
 // wire.go:
 
 var serverSet = wire.NewSet(
-	newLogger,
-
-	provideRepositoryConfig, gorm2.NewGorm2Repository, wire.Bind(new(repository.Repository), new(*gorm2.Gorm2Repository)), gorm2.GetSqlDB, ping.NewPingService, wire.Bind(new(protobuf.PingServer), new(*ping.PingService)), server.NewMySQLStore, server.NewEcho, server.NewGRPCServer, provideServerConfig, server.NewServer,
+	provideLoggerConfig, logger.NewZapLogger, provideRepositoryConfig, gorm2.NewGorm2Repository, wire.Bind(new(repository.Repository), new(*gorm2.Gorm2Repository)), gorm2.GetSqlDB, ping.NewPingService, wire.Bind(new(protobuf.PingServer), new(*ping.PingService)), server.NewMySQLStore, server.NewEcho, server.NewGRPCServer, provideServerConfig, server.NewServer,
 )
