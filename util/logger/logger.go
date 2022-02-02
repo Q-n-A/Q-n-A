@@ -1,8 +1,6 @@
 package logger
 
 import (
-	"os"
-
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
@@ -12,32 +10,44 @@ type Config struct {
 	DevMode bool
 }
 
-// loggerを生成
-func NewZapLogger(c *Config) *zap.Logger {
-	// EncoderConfigの生成
-	var encoderConfig zapcore.EncoderConfig
+// cmd層向けloggerを生成
+// traQへのログ送信ナシ
+func NewRootLogger(c *Config) (*zap.Logger, error) {
+	// ログレベルを設定
+	var logLevel zapcore.Level
 	if c.DevMode {
-		encoderConfig = zap.NewDevelopmentEncoderConfig()
+		logLevel = zap.DebugLevel
 	} else {
-		encoderConfig = zap.NewProductionEncoderConfig()
+		logLevel = zap.ErrorLevel
 	}
 
-	// Coreの生成
-	var core zapcore.Core
+	// configを生成
+	config := &zap.Config{
+		Level:    zap.NewAtomicLevelAt(logLevel),
+		Encoding: "console",
+		EncoderConfig: zapcore.EncoderConfig{
+			TimeKey:        "time",
+			LevelKey:       "level",
+			MessageKey:     "msg",
+			StacktraceKey:  "stacktrace",
+			LineEnding:     zapcore.DefaultLineEnding,
+			EncodeLevel:    zapcore.CapitalLevelEncoder,
+			EncodeTime:     zapcore.RFC3339TimeEncoder,
+			EncodeDuration: zapcore.StringDurationEncoder,
+			EncodeCaller:   zapcore.ShortCallerEncoder,
+		},
+		OutputPaths:      []string{"stdout"},
+		ErrorOutputPaths: []string{"stderr"},
+	}
 	if c.DevMode {
-		core = zapcore.NewCore(
-			zapcore.NewConsoleEncoder(encoderConfig),
-			zapcore.AddSync(os.Stdout),
-			zapcore.DebugLevel,
-		)
-	} else {
-		core = zapcore.NewCore(
-			zapcore.NewConsoleEncoder(encoderConfig),
-			zapcore.AddSync(os.Stdout),
-			zapcore.ErrorLevel,
-		)
+		config.Development = true
 	}
 
 	// Loggerの生成
-	return zap.New(core)
+	log, err := config.Build()
+	if err != nil {
+		return nil, err
+	}
+
+	return log, nil
 }
