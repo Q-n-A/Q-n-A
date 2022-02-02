@@ -18,6 +18,7 @@ var cfg = &Config{}
 // 設定
 type Config struct {
 	DevMode         bool   `mapstructure:"dev_mode" json:"dev_mode,omitempty"`                 // 開発モード (default: false)
+	AccessToken     string `mapstructure:"access_token" json:"access_token,omitempty"`         // Bot用アクセストークン (default: "")
 	ClientID        string `mapstructure:"client_id" json:"client_id,omitempty"`               // 本番環境向けのクライアントID (default: "")
 	DevClientID     string `mapstructure:"dev_client_id" json:"dev_client_id,omitempty"`       // ローカル開発環境向けのクライアントID (default: "")
 	GRPCAddr        string `mapstructure:"grpc_addr" json:"grpc_addr,omitempty"`               // gRPCサーバーがリッスンするアドレス (default: :9001)
@@ -58,6 +59,7 @@ func provideLoggerConfig(c *Config) *logger.Config {
 func loadConfig(cfgFile string) error {
 	// デフォルト値の設定
 	viper.SetDefault("dev_mode", false)
+	viper.SetDefault("access_token", "")
 	viper.SetDefault("client_id", "")
 	viper.SetDefault("dev_client_id", "")
 	viper.SetDefault("grpc_addr", ":9001")
@@ -104,7 +106,7 @@ var configCmd = &cobra.Command{
 	Use:   "config",
 	Short: "Print current configurations to stdout",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Current Configurations:")
+		fmt.Println("Current Config:")
 
 		// spewのダンプ設定
 		scs := spew.ConfigState{

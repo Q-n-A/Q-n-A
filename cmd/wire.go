@@ -11,14 +11,11 @@ import (
 	"github.com/Q-n-A/Q-n-A/server"
 	"github.com/Q-n-A/Q-n-A/server/ping"
 	"github.com/Q-n-A/Q-n-A/server/protobuf"
-	"github.com/Q-n-A/Q-n-A/util/logger"
 	"github.com/google/wire"
+	"go.uber.org/zap"
 )
 
 var serverSet = wire.NewSet(
-	provideLoggerConfig,
-	logger.NewZapLogger,
-
 	provideRepositoryConfig,
 	gorm2.NewGorm2Repository,
 	wire.Bind(new(repository.Repository), new(*gorm2.Gorm2Repository)),
@@ -35,7 +32,7 @@ var serverSet = wire.NewSet(
 	server.NewServer,
 )
 
-func setupServer(config *Config) (*server.Server, error) {
+func setupServer(config *Config, logger *zap.Logger) (*server.Server, error) {
 	wire.Build(serverSet)
 	return nil, nil
 }

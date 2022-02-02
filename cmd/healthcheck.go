@@ -4,11 +4,11 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/Q-n-A/Q-n-A/server/protobuf"
 	"github.com/spf13/cobra"
+	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -30,7 +30,7 @@ var healthcheckCmd = &cobra.Command{
 		// gRPCコネクションを作成
 		conn, err := grpc.Dial(cfg.GRPCAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {
-			log.Panicf("failed to dial too gRPC server: %v", err)
+			zapLog.Panic("failed to dial too gRPC server", zap.Error(err))
 		}
 		defer conn.Close()
 
@@ -40,31 +40,31 @@ var healthcheckCmd = &cobra.Command{
 		// Pingメソッドを呼び出し
 		res, err := pingClient.Ping(context.Background(), &emptypb.Empty{})
 		if err != nil {
-			log.Panicf("failed to ping gRPC server: %v", err)
+			zapLog.Panic("failed to ping gRPC server", zap.Error(err))
 		}
 		if res.GetMessage() != "pong" {
-			log.Panicf("unexpected response from gRPC server: %v", res.GetMessage())
+			zapLog.Panic("unexpected response from gRPC server", zap.String("responce", res.GetMessage()))
 		}
 
 		// REST APIサーバーの`/api/ping`にGETリクエストを送信
 		res2, err := http.DefaultClient.Get(fmt.Sprintf("http://%s/api/ping", cfg.RESTAddr))
 		if err != nil {
-			log.Panicf("failed to ping REST API server: %v", err)
+			zapLog.Panic("failed to ping REST API server", zap.Error(err))
 		}
 		if res2.StatusCode != http.StatusOK {
-			log.Panicf("unexpected status code: %d", res2.StatusCode)
+			zapLog.Panic("unexpected status code: %d", zap.Int("status_code", res2.StatusCode))
 		}
 		buf := new(bytes.Buffer)
 		_, err = buf.ReadFrom(res2.Body)
 		defer res2.Body.Close()
 		if err != nil {
-			log.Panicf("failed to unmarshal REST API responce: %v", err)
+			zapLog.Panic("failed to unmarshal REST API responce", zap.Error(err))
 		}
 		if buf.String() != "pong" {
-			log.Panicf("unexpected response from REST API server: %s", buf.String())
+			zapLog.Panic("unexpected response from REST API server: %s", zap.String("responce", buf.String()))
 		}
 
-		fmt.Println("Healthcheck OK")
+		zapLog.Info("Healthcheck OK")
 	},
 }
 

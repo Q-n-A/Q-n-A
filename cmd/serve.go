@@ -1,18 +1,15 @@
 package cmd
 
 import (
-	"log"
-	"net/http"
-	_ "net/http/pprof"
-
-	"github.com/felixge/fgprof"
+	"github.com/Q-n-A/Q-n-A/util/profiler"
 	"github.com/spf13/cobra"
+	"go.uber.org/zap"
 )
 
 var (
-	gRPCAddr string = ""
-	restAddr string = ""
-	devMode  bool   = false
+	gRPCAddr string
+	restAddr string
+	devMode  bool
 )
 
 // Serveコマンド - Q'n'Aサーバーの起動
@@ -32,24 +29,14 @@ var serveCmd = &cobra.Command{
 		}
 
 		// wireを使ってサーバーを生成
-		s, err := setupServer(cfg)
+		s, err := setupServer(cfg, zapLog)
 		if err != nil {
-			log.Panicf("failed to setup server: %v", err)
+			zapLog.Panic("failed to setup server", zap.Error(err))
 		}
 
 		// DevModeがtrueならfgprofサーバーを起動
 		if cfg.DevMode {
-			go func() {
-				// ハンドラを登録
-				http.DefaultServeMux.Handle("/debug/fgprof", fgprof.Handler())
-
-				// サーバーを起動
-				log.Print("Starting fgprof server")
-				err := http.ListenAndServe(":6060", nil)
-				if err != nil {
-					log.Panicf("failed to start fgprof server: %v", err)
-				}
-			}()
+			go profiler.StartFgprof(zapLog)
 		}
 
 		// サーバーを起動

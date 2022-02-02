@@ -4,8 +4,15 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/Q-n-A/Q-n-A/util/logger"
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
+	"go.uber.org/zap"
+)
+
+var (
+	cfgFile string      // 設定ファイルのパス
+	zapLog  *zap.Logger // ロガー
 )
 
 // ルートコマンド - ダミーコマンド
@@ -16,22 +23,22 @@ var rootCmd = &cobra.Command{
 		// バナーを表示
 		printBanner()
 
-		// 設定ファイルのパスを取得
-		cfgFile, err := cmd.PersistentFlags().GetString("config")
-		if err != nil {
-			cfgFile = ""
-		}
-
 		// 設定を読み込む
-		err = loadConfig(cfgFile)
+		err := loadConfig(cfgFile)
 		if err != nil {
 			log.Panicf("failed to load config: %v", err)
+		}
+
+		// ロガーを生成
+		zapLog, err = logger.NewRootLogger(provideLoggerConfig(cfg))
+		if err != nil {
+			log.Panicf("failed to setup logger: %v", err)
 		}
 	},
 }
 
 func init() {
-	rootCmd.PersistentFlags().StringP("config", "c", "", "config file (default is config.json)")
+	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", "", "config file (default is config.json)")
 }
 
 // CLI実行
