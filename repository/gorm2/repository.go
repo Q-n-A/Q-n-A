@@ -18,11 +18,11 @@ type Gorm2Repository struct {
 
 // Gorm2Repository用Config
 type Config struct {
-	MariaDBHostname string
-	MariaDBPort     int
-	MariaDBUsername string
-	MariaDBPassword string
-	MariaDBDatabase string
+	Hostname string
+	Port     int
+	Username string
+	Password string
+	Database string
 }
 
 // Gorm2Repositoryを生成
@@ -41,7 +41,7 @@ func NewGorm2Repository(c *Config, logger *zap.Logger) (*Gorm2Repository, error)
 // DBとのコネクションを作成
 func newDBConnection(c *Config, logger *zap.Logger) (*gorm.DB, error) {
 	// DSNの生成
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", c.MariaDBUsername, c.MariaDBPassword, c.MariaDBHostname, c.MariaDBPort, c.MariaDBDatabase) + "?parseTime=true&loc=Local&charset=utf8mb4"
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", c.Username, c.Password, c.Hostname, c.Port, c.Database) + "?parseTime=true&loc=Local&charset=utf8mb4"
 
 	// DBとのコネクションを作成
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{Logger: zapgorm2.New(logger)})

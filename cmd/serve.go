@@ -19,10 +19,10 @@ var serveCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		// フラグによる設定の上書き
 		if gRPCAddr != "" {
-			cfg.GRPCAddr = gRPCAddr
+			cfg.Server.GRPCAddr = gRPCAddr
 		}
 		if restAddr != "" {
-			cfg.RESTAddr = restAddr
+			cfg.Server.RESTAddr = restAddr
 		}
 		if devMode {
 			cfg.DevMode = true

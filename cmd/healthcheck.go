@@ -21,14 +21,14 @@ var healthcheckCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		// フラグによる設定の上書き
 		if gRPCAddr != "" {
-			cfg.GRPCAddr = gRPCAddr
+			cfg.Server.GRPCAddr = gRPCAddr
 		}
 		if restAddr != "" {
-			cfg.RESTAddr = restAddr
+			cfg.Server.RESTAddr = restAddr
 		}
 
 		// gRPCコネクションを作成
-		conn, err := grpc.Dial(cfg.GRPCAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+		conn, err := grpc.Dial(cfg.Server.GRPCAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {
 			zapLog.Panic("failed to dial too gRPC server", zap.Error(err))
 		}
@@ -47,7 +47,7 @@ var healthcheckCmd = &cobra.Command{
 		}
 
 		// REST APIサーバーの`/api/ping`にGETリクエストを送信
-		res2, err := http.DefaultClient.Get(fmt.Sprintf("http://%s/api/ping", cfg.RESTAddr))
+		res2, err := http.DefaultClient.Get(fmt.Sprintf("http://%s/api/ping", cfg.Server.RESTAddr))
 		if err != nil {
 			zapLog.Panic("failed to ping REST API server", zap.Error(err))
 		}
