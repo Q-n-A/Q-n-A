@@ -20,6 +20,7 @@ func init() {
 }
 
 func main() {
+	// CLI実行
 	err := cmd.Execute()
 	if err != nil {
 		log.Panicf("failed to start Q'n'A application: %v", err)
