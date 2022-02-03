@@ -7,12 +7,13 @@ import (
 
 // logger用設定
 type Config struct {
-	DevMode bool
+	DevMode     bool
+	AccessToken string
+	LogChannel  string
 }
 
-// cmd層向けloggerを生成
-// traQへのログ送信ナシ
-func NewRootLogger(c *Config) (*zap.Logger, error) {
+// zap loggerを生成
+func NewZapLogger(c *Config) (*zap.Logger, error) {
 	// ログレベルを設定
 	var logLevel zapcore.Level
 	if c.DevMode {
@@ -21,7 +22,7 @@ func NewRootLogger(c *Config) (*zap.Logger, error) {
 		logLevel = zap.ErrorLevel
 	}
 
-	// configを生成
+	// configの生成
 	config := &zap.Config{
 		Level:    zap.NewAtomicLevelAt(logLevel),
 		Encoding: "console",
@@ -43,8 +44,12 @@ func NewRootLogger(c *Config) (*zap.Logger, error) {
 		config.Development = true
 	}
 
+	// traQログ投稿フックの生成
+	hook := newTraQHook(c.AccessToken, c.LogChannel)
+	hookOpt := zap.Hooks(hook.Fire)
+
 	// Loggerの生成
-	log, err := config.Build()
+	log, err := config.Build(hookOpt)
 	if err != nil {
 		return nil, err
 	}
