@@ -4,16 +4,11 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/Q-n-A/Q-n-A/util/logger"
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
-	"go.uber.org/zap"
 )
 
-var (
-	cfgFile string      // 設定ファイルのパス
-	zapLog  *zap.Logger // ロガー
-)
+var cfgFile string // 設定ファイルのパス
 
 // ルートコマンド - ダミーコマンド
 var rootCmd = &cobra.Command{
@@ -27,12 +22,6 @@ var rootCmd = &cobra.Command{
 		err := loadConfig(cfgFile)
 		if err != nil {
 			log.Panicf("failed to load config: %v", err)
-		}
-
-		// ロガーを生成
-		zapLog, err = logger.NewRootLogger(provideLoggerConfig(cfg))
-		if err != nil {
-			log.Panicf("failed to setup logger: %v", err)
 		}
 	},
 }

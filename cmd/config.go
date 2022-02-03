@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/Q-n-A/Q-n-A/repository/gorm2"
 	"github.com/Q-n-A/Q-n-A/server"
@@ -36,24 +37,24 @@ type Config struct {
 		RESTAddr string `mapstructure:"rest_addr" json:"rest_addr,omitempty"` // REST APIサーバーがリッスンするアドレス (default: :9000)
 	} `mapstructure:"server" json:"server,omitempty"` // サーバー用設定
 
-	DB struct {
+	MariaDB struct {
 		Hostname string `mapstructure:"hostname" json:"hostname,omitempty"` // DBのホスト (default: "mariadb")
 		Port     int    `mapstructure:"port" json:"port,omitempty"`         // DBのポート番号 (default: 3306)
 		Username string `mapstructure:"username" json:"username,omitempty"` // DBのユーザー名 (default: "root")
 		Password string `mapstructure:"password" json:"password,omitempty"` // DBのパスワード (default: "password")
 		Database string `mapstructure:"database" json:"database,omitempty"` // DBのDB名 (default: "Q-n-A")
-	} `mapstructure:"db" json:"db,omitempty"` // DB用設定
+	} `mapstructure:"mariadb" json:"mariadb,omitempty"` // MariaDB用設定
 
 }
 
 // Gorm v2リポジトリ用設定の提供
 func provideRepositoryConfig(c *Config) *gorm2.Config {
 	return &gorm2.Config{
-		Hostname: c.DB.Hostname,
-		Port:     c.DB.Port,
-		Username: c.DB.Username,
-		Password: c.DB.Password,
-		Database: c.DB.Database,
+		Hostname: c.MariaDB.Hostname,
+		Port:     c.MariaDB.Port,
+		Username: c.MariaDB.Username,
+		Password: c.MariaDB.Password,
+		Database: c.MariaDB.Database,
 	}
 }
 
@@ -90,14 +91,15 @@ func loadConfig(cfgFile string) error {
 	viper.SetDefault("server.grpc_addr", ":9001")
 	viper.SetDefault("server.rest_addr", ":9000")
 
-	viper.SetDefault("db.hostname", "mariadb")
-	viper.SetDefault("db.port", 3306)
-	viper.SetDefault("db.username", "root")
-	viper.SetDefault("db.password", "password")
-	viper.SetDefault("db.database", "Q-n-A")
+	viper.SetDefault("mariadb.hostname", "mariadb")
+	viper.SetDefault("mariadb.port", 3306)
+	viper.SetDefault("mariadb.username", "root")
+	viper.SetDefault("mariadb.password", "password")
+	viper.SetDefault("mariadb.database", "Q-n-A")
 
 	// 環境変数の取得
 	viper.AutomaticEnv()
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 
 	if cfgFile != "" {
 		// 引数で渡された設定ファイルをセット

@@ -1,6 +1,9 @@
 package cmd
 
 import (
+	"log"
+
+	"github.com/Q-n-A/Q-n-A/util/logger"
 	"github.com/Q-n-A/Q-n-A/util/profiler"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
@@ -26,6 +29,12 @@ var serveCmd = &cobra.Command{
 		}
 		if devMode {
 			cfg.DevMode = true
+		}
+
+		// ロガーを生成
+		zapLog, err := logger.NewZapLogger(provideLoggerConfig(cfg))
+		if err != nil {
+			log.Panicf("failed to setup logger: %v", err)
 		}
 
 		// wireを使ってサーバーを生成

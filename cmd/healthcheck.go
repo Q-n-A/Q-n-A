@@ -4,11 +4,11 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/Q-n-A/Q-n-A/server/protobuf"
 	"github.com/spf13/cobra"
-	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -30,7 +30,7 @@ var healthcheckCmd = &cobra.Command{
 		// gRPCコネクションを作成
 		conn, err := grpc.Dial(cfg.Server.GRPCAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {
-			zapLog.Panic("failed to dial too gRPC server", zap.Error(err))
+			log.Panicf("failed to dial too gRPC server: %v", err)
 		}
 		defer conn.Close()
 
@@ -40,31 +40,31 @@ var healthcheckCmd = &cobra.Command{
 		// Pingメソッドを呼び出し
 		res, err := pingClient.Ping(context.Background(), &emptypb.Empty{})
 		if err != nil {
-			zapLog.Panic("failed to ping gRPC server", zap.Error(err))
+			log.Panicf("failed to ping gRPC server: %v", err)
 		}
 		if res.GetMessage() != "pong" {
-			zapLog.Panic("unexpected response from gRPC server", zap.String("responce", res.GetMessage()))
+			log.Panicf("unexpected response from gRPC server: %v", err)
 		}
 
 		// REST APIサーバーの`/api/ping`にGETリクエストを送信
 		res2, err := http.DefaultClient.Get(fmt.Sprintf("http://%s/api/ping", cfg.Server.RESTAddr))
 		if err != nil {
-			zapLog.Panic("failed to ping REST API server", zap.Error(err))
+			log.Panicf("failed to ping REST API server: %v", err)
 		}
 		if res2.StatusCode != http.StatusOK {
-			zapLog.Panic("unexpected status code: %d", zap.Int("status_code", res2.StatusCode))
+			log.Panicf("unexpected status code: %d", res2.StatusCode)
 		}
 		buf := new(bytes.Buffer)
 		_, err = buf.ReadFrom(res2.Body)
 		defer res2.Body.Close()
 		if err != nil {
-			zapLog.Panic("failed to unmarshal REST API responce", zap.Error(err))
+			log.Panicf("failed to unmarshal REST API responce: %v", err)
 		}
 		if buf.String() != "pong" {
-			zapLog.Panic("unexpected response from REST API server: %s", zap.String("responce", buf.String()))
+			log.Panicf("unexpected response from REST API server: %s", buf.String())
 		}
 
-		zapLog.Info("Healthcheck OK")
+		log.Println("Healthcheck OK")
 	},
 }
 
