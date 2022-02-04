@@ -45,7 +45,12 @@ var serveCmd = &cobra.Command{
 
 		// DevModeがtrueならfgprofサーバーを起動
 		if cfg.DevMode {
-			go profiler.StartFgprof(zapLog)
+			go func() {
+				err := profiler.StartFgprof(zapLog)
+				if err != nil {
+					zapLog.Panic("failed to start fgprof server", zap.Error(err))
+				}
+			}()
 		}
 
 		// サーバーを起動

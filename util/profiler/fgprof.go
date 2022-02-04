@@ -9,7 +9,7 @@ import (
 )
 
 // fgprofサーバーを起動
-func StartFgprof(logger *zap.Logger) {
+func StartFgprof(logger *zap.Logger) error {
 	// ハンドラを登録
 	http.DefaultServeMux.Handle("/debug/fgprof", fgprof.Handler())
 
@@ -17,6 +17,8 @@ func StartFgprof(logger *zap.Logger) {
 	logger.Info("Starting fgprof server")
 	err := http.ListenAndServe(":6060", nil)
 	if err != nil {
-		logger.Panic("failed to start fgprof server", zap.Error(err))
+		return err
 	}
+
+	return nil
 }
