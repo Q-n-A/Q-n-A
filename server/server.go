@@ -49,7 +49,7 @@ func (s *Server) Run() {
 	}()
 
 	// REST APIサーバーを起動
-	s.logger.Info("Starting REST API server on " + s.c.GRPCAddr)
+	s.logger.Info("Starting REST API server on " + s.c.RESTAddr)
 	err = s.e.Start(s.c.RESTAddr)
 	s.logger.Panic("failed to run REST API server", zap.Error(err))
 }
