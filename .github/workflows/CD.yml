@@ -4,7 +4,9 @@ on:
   push:
     paths:
       - "**.go"
-      - "**/Dockerfile"
+      - "go.mod"
+      - "go.sum"
+      - "Dockerfile"
 
 env:
   IMAGE_NAME: q-n-a
