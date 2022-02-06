@@ -14,12 +14,7 @@ type Config struct {
 // zap loggerを生成
 func NewZapLogger(c *Config, cli client.BotClient) (*zap.Logger, error) {
 	// ログレベルを設定
-	var logLevel zapcore.Level
-	if c.DevMode {
-		logLevel = zap.DebugLevel
-	} else {
-		logLevel = zap.ErrorLevel
-	}
+	logLevel := zap.DebugLevel
 
 	// configの生成
 	config := &zap.Config{
