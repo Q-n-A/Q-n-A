@@ -3,6 +3,7 @@ package server
 import (
 	"net"
 
+	"github.com/Q-n-A/Q-n-A/util/profiler"
 	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -18,6 +19,7 @@ type Server struct {
 
 // サーバー用設定
 type Config struct {
+	DevMode  bool
 	GRPCAddr string
 	RESTAddr string
 }
@@ -34,6 +36,16 @@ func NewServer(e *echo.Echo, s *grpc.Server, logger *zap.Logger, Config *Config)
 
 // サーバーを起動
 func (s *Server) Run() {
+	// DevModeがtrueならfgprofサーバーを起動
+	if s.c.DevMode {
+		go func() {
+			err := profiler.StartFgprof(s.logger)
+			if err != nil {
+				s.logger.Panic("failed to start fgprof server", zap.Error(err))
+			}
+		}()
+	}
+
 	// gRPC用リスナーの作成
 	lis, err := net.Listen("tcp", s.c.GRPCAddr)
 	if err != nil {

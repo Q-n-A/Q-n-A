@@ -4,7 +4,6 @@ import (
 	"log"
 
 	"github.com/Q-n-A/Q-n-A/util/logger"
-	"github.com/Q-n-A/Q-n-A/util/profiler"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 )
@@ -41,16 +40,6 @@ var serveCmd = &cobra.Command{
 		s, err := setupServer(cfg, zapLog)
 		if err != nil {
 			zapLog.Panic("failed to setup server", zap.Error(err))
-		}
-
-		// DevModeがtrueならfgprofサーバーを起動
-		if cfg.DevMode {
-			go func() {
-				err := profiler.StartFgprof(zapLog)
-				if err != nil {
-					zapLog.Panic("failed to start fgprof server", zap.Error(err))
-				}
-			}()
 		}
 
 		// サーバーを起動

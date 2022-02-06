@@ -61,6 +61,7 @@ func provideRepositoryConfig(c *Config) *gorm2.Config {
 // サーバー用設定の提供
 func provideServerConfig(c *Config) *server.Config {
 	return &server.Config{
+		DevMode:  c.DevMode,
 		GRPCAddr: c.Server.GRPCAddr,
 		RESTAddr: c.Server.RESTAddr,
 	}
