@@ -2,6 +2,7 @@ package server
 
 import (
 	"database/sql"
+	"net/http"
 
 	"github.com/brpaz/echozap"
 	"github.com/gorilla/sessions"
@@ -36,7 +37,7 @@ func registerHandlers(e *echo.Echo) {
 	api := e.Group("/api")
 	{
 		api.GET("/ping", func(c echo.Context) error {
-			return c.String(200, "pong")
+			return c.String(http.StatusOK, "pong")
 		})
 	}
 }
