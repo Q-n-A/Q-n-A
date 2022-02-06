@@ -5,6 +5,7 @@ import (
 	"log"
 	"strings"
 
+	"github.com/Q-n-A/Q-n-A/client/traq_bot"
 	"github.com/Q-n-A/Q-n-A/repository/gorm2"
 	"github.com/Q-n-A/Q-n-A/server"
 	"github.com/Q-n-A/Q-n-A/util/logger"
@@ -73,6 +74,16 @@ func provideLoggerConfig(c *Config) *logger.Config {
 		DevMode:     c.DevMode,
 		AccessToken: c.Bot.AccessToken,
 		LogChannel:  c.Bot.LogChannel,
+	}
+}
+
+// traQ Botクライアント用設定の提供
+func provideTraQBotClientConfig(c *Config) *traq_bot.Config {
+	return &traq_bot.Config{
+		DevMode:             c.DevMode,
+		AccessToken:         c.Bot.AccessToken,
+		LogChannel:          c.Bot.LogChannel,
+		NotificationChannel: c.Bot.NotificationChannel,
 	}
 }
 

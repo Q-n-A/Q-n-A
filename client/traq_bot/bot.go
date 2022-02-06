@@ -1,4 +1,4 @@
-package traq
+package traq_bot
 
 import (
 	"context"
@@ -10,6 +10,7 @@ import (
 type traQBotClient struct {
 	cli                 *traq.APIClient
 	auth                context.Context
+	logChannel          string
 	notificationChannel string
 }
 
@@ -17,6 +18,7 @@ type traQBotClient struct {
 type Config struct {
 	DevMode             bool
 	AccessToken         string
+	LogChannel          string
 	NotificationChannel string
 }
 
@@ -30,6 +32,7 @@ func NewTraQBotClient(c *Config) *traQBotClient {
 	return &traQBotClient{
 		cli:                 client,
 		auth:                auth,
+		logChannel:          c.LogChannel,
 		notificationChannel: c.NotificationChannel,
 	}
 }
