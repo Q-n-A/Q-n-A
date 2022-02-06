@@ -1,31 +1,19 @@
 package logger
 
 import (
-	"context"
-
-	"github.com/antihax/optional"
-	traq "github.com/sapphi-red/go-traq"
+	"github.com/Q-n-A/Q-n-A/client"
 	"go.uber.org/zap/zapcore"
 )
 
 // traQログ投稿フック
 type traQHook struct {
-	cli     *traq.APIClient
-	auth    context.Context
-	channel string
+	cli client.BotClient
 }
 
 // traQHookを生成
-func newTraQHook(accessToken string, channel string) *traQHook {
-	// traQクライアントの生成
-	client := traq.NewAPIClient(traq.NewConfiguration())
-	// アクセストークンから認証情報を生成
-	auth := context.WithValue(context.Background(), traq.ContextAccessToken, accessToken)
-
+func newTraQHook(cli client.BotClient) *traQHook {
 	return &traQHook{
-		cli:     client,
-		auth:    auth,
-		channel: channel,
+		cli: cli,
 	}
 }
 
@@ -53,17 +41,8 @@ func (h *traQHook) sendLog(e zapcore.Entry) error {
 	// ログのフォーマット
 	msg := "## " + e.Level.CapitalString() + " log\n" + e.Message + "\n" + e.Time.Format("2006-01-02T15:04:05+MST") + "\n```\n" + e.Stack + "\n```"
 
-	// リクエスト用オプション生成
-	req := traq.PostMessageRequest{
-		Content: msg,
-		Embed:   true,
-	}
-	opts := &traq.MessageApiPostMessageOpts{
-		PostMessageRequest: optional.NewInterface(req),
-	}
-
 	// メッセージを送信
-	_, _, err := h.cli.MessageApi.PostMessage(h.auth, h.channel, opts)
+	err := h.cli.SendLog(msg)
 	if err != nil {
 		return err
 	}

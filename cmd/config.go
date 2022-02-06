@@ -71,9 +71,7 @@ func provideServerConfig(c *Config) *server.Config {
 // logger用設定の提供
 func provideLoggerConfig(c *Config) *logger.Config {
 	return &logger.Config{
-		DevMode:     c.DevMode,
-		AccessToken: c.Bot.AccessToken,
-		LogChannel:  c.Bot.LogChannel,
+		DevMode: c.DevMode,
 	}
 }
 

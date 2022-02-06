@@ -6,7 +6,7 @@ import (
 	"github.com/sapphi-red/go-traq"
 )
 
-func (c *traQBotClient) SendLog(msg string) error {
+func (c *TraQBotClient) SendLog(msg string) error {
 	// リクエスト用オプション生成
 	req := traq.PostMessageRequest{
 		Content: msg,
@@ -25,7 +25,7 @@ func (c *traQBotClient) SendLog(msg string) error {
 	return nil
 }
 
-func (c *traQBotClient) SendMessage(channelID uuid.UUID, msg string) error {
+func (c *TraQBotClient) SendMessage(channelID uuid.UUID, msg string) error {
 	// リクエスト用オプション生成
 	req := traq.PostMessageRequest{
 		Content: msg,

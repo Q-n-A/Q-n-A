@@ -7,7 +7,7 @@ import (
 )
 
 // traQ Botクライアント
-type traQBotClient struct {
+type TraQBotClient struct {
 	cli                 *traq.APIClient
 	auth                context.Context
 	logChannel          string
@@ -23,13 +23,13 @@ type Config struct {
 }
 
 // traQ Botクライアントを生成
-func NewTraQBotClient(c *Config) *traQBotClient {
+func NewTraQBotClient(c *Config) *TraQBotClient {
 	// traQクライアントの生成
 	client := traq.NewAPIClient(traq.NewConfiguration())
 	// アクセストークンから認証情報を生成
 	auth := context.WithValue(context.Background(), traq.ContextAccessToken, c.AccessToken)
 
-	return &traQBotClient{
+	return &TraQBotClient{
 		cli:                 client,
 		auth:                auth,
 		logChannel:          c.LogChannel,

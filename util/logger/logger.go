@@ -1,19 +1,18 @@
 package logger
 
 import (
+	"github.com/Q-n-A/Q-n-A/client"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
 
 // logger用設定
 type Config struct {
-	DevMode     bool
-	AccessToken string
-	LogChannel  string
+	DevMode bool
 }
 
 // zap loggerを生成
-func NewZapLogger(c *Config) (*zap.Logger, error) {
+func NewZapLogger(c *Config, cli client.BotClient) (*zap.Logger, error) {
 	// ログレベルを設定
 	var logLevel zapcore.Level
 	if c.DevMode {
@@ -45,7 +44,7 @@ func NewZapLogger(c *Config) (*zap.Logger, error) {
 	}
 
 	// traQログ投稿フックの生成
-	hook := newTraQHook(c.AccessToken, c.LogChannel)
+	hook := newTraQHook(cli)
 	hookOpt := zap.Hooks(hook.Fire)
 
 	// Loggerの生成
