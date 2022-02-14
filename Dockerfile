@@ -1,4 +1,4 @@
-FROM logica0419/protoc-go:1.17.6 AS builder
+FROM logica0419/protoc-go:1.17.7 AS builder
 WORKDIR /build
 COPY . .
 
