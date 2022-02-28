@@ -5,7 +5,7 @@ import (
 	"database/sql"
 )
 
-// Repositoryインターフェース
+// Repository Repositoryインターフェース
 // repositoryとしての基本動作を定義
 // 全てのsub-repositoryインターフェースに埋め込まれる
 type Repository interface {

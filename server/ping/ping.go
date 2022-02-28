@@ -7,17 +7,17 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
-// Pingサービス
-type PingService struct {
+// Server Pingサーバー
+type Server struct {
 	protobuf.UnimplementedPingServer
 }
 
-// Pingサービス生成
-func NewPingService() *PingService {
-	return &PingService{}
+// NewServer Pingサーバー生成
+func NewServer() *Server {
+	return &Server{}
 }
 
-// Pingメソッド
-func (p *PingService) Ping(context.Context, *emptypb.Empty) (*protobuf.PingResponse, error) {
+// Ping Pingメソッド
+func (p *Server) Ping(context.Context, *emptypb.Empty) (*protobuf.PingResponse, error) {
 	return &protobuf.PingResponse{Message: "pong"}, nil
 }

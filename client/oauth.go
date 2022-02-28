@@ -1,4 +1,4 @@
 package client
 
-// OAuthクライアント
+// OauthClient OAuthクライアント
 type OauthClient interface{}

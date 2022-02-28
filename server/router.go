@@ -12,7 +12,7 @@ import (
 	"go.uber.org/zap"
 )
 
-// 新しいEchoインスタンスを生成
+// NewEcho 新しいEchoインスタンスを生成
 func NewEcho(store sessions.Store, logger *zap.Logger) *echo.Echo {
 	e := echo.New()
 
@@ -32,7 +32,7 @@ func NewEcho(store sessions.Store, logger *zap.Logger) *echo.Echo {
 	return e
 }
 
-// ハンドラをEchoインスタンスに登録
+// registerHandlers ハンドラをEchoインスタンスに登録
 func registerHandlers(e *echo.Echo) {
 	api := e.Group("/api")
 	{
@@ -42,7 +42,7 @@ func registerHandlers(e *echo.Echo) {
 	}
 }
 
-// 新しいMySQLセッションストアを生成
+// NewMySQLStore 新しいMySQLセッションストアを生成
 func NewMySQLStore(db *sql.DB) (sessions.Store, error) {
 	store, err := mysqlstore.NewMySQLStoreFromConnection(db, "sessions", "/", 60*60*24*14, []byte("secret-key"))
 	if err != nil {

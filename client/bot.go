@@ -2,7 +2,7 @@ package client
 
 import "github.com/google/uuid"
 
-// Botクライアント
+// BotClient Botクライアント
 type BotClient interface {
 	// ログを送信
 	SendLog(msg string) error

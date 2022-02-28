@@ -6,12 +6,12 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-// logger用設定
+// Config logger用設定
 type Config struct {
 	DevMode bool
 }
 
-// zap loggerを生成
+// NewZapLogger 新しいzap loggerを生成
 func NewZapLogger(c *Config, cli client.BotClient) (*zap.Logger, error) {
 	// ログレベルを設定
 	logLevel := zap.DebugLevel

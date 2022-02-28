@@ -1,11 +1,12 @@
 package cmd
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"strings"
 
-	"github.com/Q-n-A/Q-n-A/client/traq_bot"
+	"github.com/Q-n-A/Q-n-A/client/traqBot"
 	"github.com/Q-n-A/Q-n-A/repository/gorm2"
 	"github.com/Q-n-A/Q-n-A/server"
 	"github.com/Q-n-A/Q-n-A/util/logger"
@@ -14,42 +15,42 @@ import (
 	"github.com/spf13/viper"
 )
 
-// 設定格納用変数
-var cfg *Config
+// cfg 設定格納用変数
+var cfg *config
 
-// 設定
-type Config struct {
-	DevMode bool `mapstructure:"dev_mode" json:"dev_mode,omitempty"` // 開発モード (default: false)
+// config サーバー設定
+type config struct {
+	DevMode bool `mapstructure:"dev_mode"` // 開発モード (default: false)
 
 	Bot struct {
-		AccessToken         string `mapstructure:"access_token" json:"access_token,omitempty"`                 // Bot用アクセストークン (default: "")
-		VerificationToken   string `mapstructure:"verification_token" json:"verification_token,omitempty"`     // Bot用確認トークン (default: "")
-		LogChannel          string `mapstructure:"log_channel" json:"log_channel,omitempty"`                   // ログ投稿チャンネル (default: "")
-		NotificationChannel string `mapstructure:"notification_channel" json:"notification_channel,omitempty"` // 通知投稿チャンネル (default: "")
-	} `mapstructure:"bot" json:"bot,omitempty"` // Bot用設定
+		AccessToken         string `mapstructure:"access_token"`         // Bot用アクセストークン (default: "")
+		VerificationToken   string `mapstructure:"verification_token"`   // Bot用確認トークン (default: "")
+		LogChannel          string `mapstructure:"log_channel"`          // ログ投稿チャンネル (default: "")
+		NotificationChannel string `mapstructure:"notification_channel"` // 通知投稿チャンネル (default: "")
+	} `mapstructure:"bot"` // Bot用設定
 
 	Client struct {
-		ID    string `mapstructure:"id" json:"id,omitempty"`         // 本番環境向けのクライアントID (default: "")
-		DevID string `mapstructure:"dev_id" json:"dev_id,omitempty"` // ローカル開発環境向けのクライアントID (default: "")
-	} `mapstructure:"client" json:"client,omitempty"` // OAuthクライアント用設定
+		ID    string `mapstructure:"id"`     // 本番環境向けのクライアントID (default: "")
+		DevID string `mapstructure:"dev_id"` // ローカル開発環境向けのクライアントID (default: "")
+	} `mapstructure:"client"` // OAuthクライアント用設定
 
 	Server struct {
-		GRPCAddr string `mapstructure:"grpc_addr" json:"grpc_addr,omitempty"` // gRPCサーバーがリッスンするアドレス (default: :9001)
-		RESTAddr string `mapstructure:"rest_addr" json:"rest_addr,omitempty"` // REST APIサーバーがリッスンするアドレス (default: :9000)
-	} `mapstructure:"server" json:"server,omitempty"` // サーバー用設定
+		GRPCAddr string `mapstructure:"grpc_addr"` // gRPCサーバーがリッスンするアドレス (default: :9001)
+		RESTAddr string `mapstructure:"rest_addr"` // REST APIサーバーがリッスンするアドレス (default: :9000)
+	} `mapstructure:"server"` // サーバー用設定
 
 	MariaDB struct {
-		Hostname string `mapstructure:"hostname" json:"hostname,omitempty"` // DBのホスト (default: "mariadb")
-		Port     int    `mapstructure:"port" json:"port,omitempty"`         // DBのポート番号 (default: 3306)
-		Username string `mapstructure:"username" json:"username,omitempty"` // DBのユーザー名 (default: "root")
-		Password string `mapstructure:"password" json:"password,omitempty"` // DBのパスワード (default: "password")
-		Database string `mapstructure:"database" json:"database,omitempty"` // DBのDB名 (default: "Q-n-A")
-	} `mapstructure:"mariadb" json:"mariadb,omitempty"` // MariaDB用設定
+		Hostname string `mapstructure:"hostname"` // DBのホスト (default: "mariadb")
+		Port     int    `mapstructure:"port"`     // DBのポート番号 (default: 3306)
+		Username string `mapstructure:"username"` // DBのユーザー名 (default: "root")
+		Password string `mapstructure:"password"` // DBのパスワード (default: "password")
+		Database string `mapstructure:"database"` // DBのDB名 (default: "Q-n-A")
+	} `mapstructure:"mariadb"` // MariaDB用設定
 
 }
 
-// Gorm v2リポジトリ用設定の提供
-func provideRepositoryConfig(c *Config) *gorm2.Config {
+// provideRepositoryConfig Gorm v2リポジトリ用設定の提供
+func provideRepositoryConfig(c *config) *gorm2.Config {
 	return &gorm2.Config{
 		Hostname: c.MariaDB.Hostname,
 		Port:     c.MariaDB.Port,
@@ -59,8 +60,8 @@ func provideRepositoryConfig(c *Config) *gorm2.Config {
 	}
 }
 
-// サーバー用設定の提供
-func provideServerConfig(c *Config) *server.Config {
+// provideServerConfig サーバー用設定の提供
+func provideServerConfig(c *config) *server.Config {
 	return &server.Config{
 		DevMode:  c.DevMode,
 		GRPCAddr: c.Server.GRPCAddr,
@@ -68,16 +69,16 @@ func provideServerConfig(c *Config) *server.Config {
 	}
 }
 
-// logger用設定の提供
-func provideLoggerConfig(c *Config) *logger.Config {
+// provideLoggerConfig logger用設定の提供
+func provideLoggerConfig(c *config) *logger.Config {
 	return &logger.Config{
 		DevMode: c.DevMode,
 	}
 }
 
-// traQ Botクライアント用設定の提供
-func provideTraQBotClientConfig(c *Config) *traq_bot.Config {
-	return &traq_bot.Config{
+// provideTraQBotClientConfig traQ Botクライアント用設定の提供
+func provideTraQBotClientConfig(c *config) *traqBot.Config {
+	return &traqBot.Config{
 		DevMode:             c.DevMode,
 		AccessToken:         c.Bot.AccessToken,
 		LogChannel:          c.Bot.LogChannel,
@@ -85,7 +86,7 @@ func provideTraQBotClientConfig(c *Config) *traq_bot.Config {
 	}
 }
 
-// 設定を読み込む
+// loadConfig 設定を読み込む
 func loadConfig(cfgFile string) error {
 	// デフォルト値の設定
 	viper.SetDefault("dev_mode", false)
@@ -123,23 +124,22 @@ func loadConfig(cfgFile string) error {
 
 	// 設定ファイルの読み込み
 	if err := viper.ReadInConfig(); err != nil {
-		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
+		if ok := errors.As(err, &viper.ConfigFileNotFoundError{}); ok {
 			log.Print("Unable to find config file, default settings or environmental variables are to be used.")
 		} else {
-			return fmt.Errorf("Error: failed to load config file - %s ", err)
+			return fmt.Errorf("failed to load config file - %w", err)
 		}
 	}
 
 	// 構造体にバインド
-	err := viper.Unmarshal(&cfg)
-	if err != nil {
-		return fmt.Errorf("Error: failed to parse configs - %s ", err)
+	if err := viper.Unmarshal(&cfg); err != nil {
+		return fmt.Errorf("failed to parse configs - %w", err)
 	}
 
 	return nil
 }
 
-// Configコマンド - 現在の設定を表示する
+// configCmd 現在の設定を表示する
 var configCmd = &cobra.Command{
 	Use:   "config",
 	Short: "Print current configurations to stdout",

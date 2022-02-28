@@ -7,12 +7,12 @@ import (
 )
 
 var (
-	gRPCAddr string
-	restAddr string
-	devMode  bool
+	gRPCAddr string // gRPCサーバーがリッスンするアドレス
+	restAddr string // REST APIサーバーがリッスンするアドレス
+	devMode  bool   // 開発モード
 )
 
-// Serveコマンド - Q'n'Aサーバーの起動
+// serveCmd Q'n'Aサーバーの起動
 var serveCmd = &cobra.Command{
 	Use:   "serve",
 	Short: "Run Q'n'A server",

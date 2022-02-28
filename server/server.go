@@ -9,7 +9,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-// サーバー
+// Server サーバー
 type Server struct {
 	e      *echo.Echo
 	s      *grpc.Server
@@ -17,14 +17,14 @@ type Server struct {
 	c      *Config
 }
 
-// サーバー用設定
+// Config サーバー用設定
 type Config struct {
 	DevMode  bool
 	GRPCAddr string
 	RESTAddr string
 }
 
-// 新しいサーバーを生成
+// NewServer 新しいサーバーを生成
 func NewServer(e *echo.Echo, s *grpc.Server, logger *zap.Logger, Config *Config) *Server {
 	return &Server{
 		e:      e,
@@ -34,7 +34,7 @@ func NewServer(e *echo.Echo, s *grpc.Server, logger *zap.Logger, Config *Config)
 	}
 }
 
-// サーバーを起動
+// Run サーバーを起動
 func (s *Server) Run() {
 	// DevModeがtrueならfgprofサーバーを起動
 	if s.c.DevMode {
@@ -55,6 +55,7 @@ func (s *Server) Run() {
 	// goroutineでgRPCサーバーを起動
 	go func() {
 		s.logger.Info("Starting gRPC server on " + s.c.GRPCAddr)
+
 		if err := s.s.Serve(lis); err != nil {
 			s.logger.Panic("failed to run gRPC server", zap.Error(err))
 		}

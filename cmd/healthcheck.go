@@ -14,7 +14,7 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
-// Healthcheckコマンド - サーバーへのpingが正常に帰ってくるかを確認する
+// healthcheckCmd サーバーへのpingが正常に帰ってくるかを確認する
 var healthcheckCmd = &cobra.Command{
 	Use:   "healthcheck",
 	Short: "Server healthcheck",
@@ -32,7 +32,7 @@ var healthcheckCmd = &cobra.Command{
 		if err != nil {
 			log.Panicf("failed to dial too gRPC server: %v", err)
 		}
-		defer conn.Close()
+		defer func() { _ = conn.Close() }()
 
 		// Pingサービスのクライアントを作成
 		pingClient := protobuf.NewPingClient(conn)
@@ -58,7 +58,7 @@ var healthcheckCmd = &cobra.Command{
 		_, err = buf.ReadFrom(res2.Body)
 		defer res2.Body.Close()
 		if err != nil {
-			log.Panicf("failed to unmarshal REST API responce: %v", err)
+			log.Panicf("failed to unmarshal REST API response: %v", err)
 		}
 		if buf.String() != "pong" {
 			log.Panicf("unexpected response from REST API server: %s", buf.String())

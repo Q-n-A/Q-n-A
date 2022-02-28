@@ -1,4 +1,4 @@
-package traq_bot
+package traqBot
 
 import (
 	"github.com/antihax/optional"
@@ -6,7 +6,8 @@ import (
 	"github.com/sapphi-red/go-traq"
 )
 
-func (c *TraQBotClient) SendLog(msg string) error {
+// SendLog ログを送信
+func (c *Client) SendLog(msg string) error {
 	// リクエスト用オプション生成
 	req := traq.PostMessageRequest{
 		Content: msg,
@@ -17,7 +18,7 @@ func (c *TraQBotClient) SendLog(msg string) error {
 	}
 
 	// メッセージを送信
-	_, _, err := c.cli.MessageApi.PostMessage(c.auth, c.logChannel, opts)
+	_, _, err := c.cli.MessageApi.PostMessage(c.getAuthContext(), c.logChannel, opts)
 	if err != nil {
 		return err
 	}
@@ -25,7 +26,8 @@ func (c *TraQBotClient) SendLog(msg string) error {
 	return nil
 }
 
-func (c *TraQBotClient) SendMessage(channelID uuid.UUID, msg string) error {
+// SendMessage 指定したチャンネルにメッセージを送信
+func (c *Client) SendMessage(channelID uuid.UUID, msg string) error {
 	// リクエスト用オプション生成
 	req := traq.PostMessageRequest{
 		Content: msg,
@@ -36,7 +38,7 @@ func (c *TraQBotClient) SendMessage(channelID uuid.UUID, msg string) error {
 	}
 
 	// メッセージを送信
-	_, _, err := c.cli.MessageApi.PostMessage(c.auth, channelID.String(), opts)
+	_, _, err := c.cli.MessageApi.PostMessage(c.getAuthContext(), channelID.String(), opts)
 	if err != nil {
 		return err
 	}

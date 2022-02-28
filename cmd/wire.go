@@ -7,7 +7,7 @@ package cmd
 
 import (
 	"github.com/Q-n-A/Q-n-A/client"
-	"github.com/Q-n-A/Q-n-A/client/traq_bot"
+	"github.com/Q-n-A/Q-n-A/client/traqBot"
 	"github.com/Q-n-A/Q-n-A/repository"
 	"github.com/Q-n-A/Q-n-A/repository/gorm2"
 	"github.com/Q-n-A/Q-n-A/server"
@@ -19,19 +19,19 @@ import (
 
 var serverSet = wire.NewSet(
 	provideTraQBotClientConfig,
-	traq_bot.NewTraQBotClient,
-	wire.Bind(new(client.BotClient), new(*traq_bot.TraQBotClient)),
+	traqBot.NewTraQBotClient,
+	wire.Bind(new(client.BotClient), new(*traqBot.Client)),
 
 	provideLoggerConfig,
 	logger.NewZapLogger,
 
 	provideRepositoryConfig,
 	gorm2.NewGorm2Repository,
-	wire.Bind(new(repository.Repository), new(*gorm2.Gorm2Repository)),
-	gorm2.GetSqlDB,
+	wire.Bind(new(repository.Repository), new(*gorm2.Repository)),
+	gorm2.GetSQLDb,
 
-	ping.NewPingService,
-	wire.Bind(new(protobuf.PingServer), new(*ping.PingService)),
+	ping.NewServer,
+	wire.Bind(new(protobuf.PingServer), new(*ping.Server)),
 
 	server.NewMySQLStore,
 	server.NewEcho,
@@ -41,7 +41,7 @@ var serverSet = wire.NewSet(
 	server.NewServer,
 )
 
-func setupServer(config *Config) (*server.Server, error) {
+func setupServer(config *config) (*server.Server, error) {
 	wire.Build(serverSet)
 	return nil, nil
 }

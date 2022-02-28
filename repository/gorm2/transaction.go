@@ -8,12 +8,14 @@ import (
 	"gorm.io/gorm"
 )
 
-type ctxKey string // contextに格納するDBインスタンスのkey型
+type ctxKey string // ctxKey contextに格納するDBインスタンスのkey型
 
-const txKey ctxKey = "transaction" // contextに格納するDBインスタンスのkey
+const txKey ctxKey = "transaction" // txKey contextに格納するDBインスタンスのkey
 
-// Transactionの中でメソッドを実行する
-func (repo *Gorm2Repository) Do(ctx context.Context, options *sql.TxOptions, callBack func(context.Context) error) error {
+var errorDBCastFailed = fmt.Errorf("failed to cast DB instance to *gorm.DB") // 型キャスト失敗エラー
+
+// Do Transactionの中でメソッドを実行する
+func (repo *Repository) Do(ctx context.Context, options *sql.TxOptions, callBack func(context.Context) error) error {
 	// トランザクション内で実行される関数
 	// 返り値がnilでなければロールバックされ、返り値がnilならコミットされる
 	txFunc := func(tx *gorm.DB) error {
@@ -51,8 +53,8 @@ func (repo *Gorm2Repository) Do(ctx context.Context, options *sql.TxOptions, cal
 	return nil
 }
 
-// DBインスタンスをコンテキストから取得
-func (repo *Gorm2Repository) getTX(ctx context.Context) (*gorm.DB, error) {
+// getTX DBインスタンスをコンテキストから取得
+func (repo *Repository) getTX(ctx context.Context) (*gorm.DB, error) {
 	// contextからDBインスタンスを取得
 	txInterface := ctx.Value(txKey)
 	// contextにDBインスタンスが存在しない場合はcontextをもとに新たなセッションを開始
@@ -63,7 +65,7 @@ func (repo *Gorm2Repository) getTX(ctx context.Context) (*gorm.DB, error) {
 	// DBインスタンスをgorm.DB型にキャスト
 	tx, ok := txInterface.(*gorm.DB)
 	if !ok {
-		return nil, fmt.Errorf("failed to cast DB instance to *gorm.DB")
+		return nil, errorDBCastFailed
 	}
 
 	return tx, nil

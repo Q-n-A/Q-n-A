@@ -8,7 +8,7 @@ package cmd
 
 import (
 	"github.com/Q-n-A/Q-n-A/client"
-	"github.com/Q-n-A/Q-n-A/client/traq_bot"
+	"github.com/Q-n-A/Q-n-A/client/traqBot"
 	"github.com/Q-n-A/Q-n-A/repository"
 	"github.com/Q-n-A/Q-n-A/repository/gorm2"
 	"github.com/Q-n-A/Q-n-A/server"
@@ -20,20 +20,20 @@ import (
 
 // Injectors from wire.go:
 
-func setupServer(config *Config) (*server.Server, error) {
-	gorm2Config := provideRepositoryConfig(config)
-	loggerConfig := provideLoggerConfig(config)
-	traq_botConfig := provideTraQBotClientConfig(config)
-	traQBotClient := traq_bot.NewTraQBotClient(traq_botConfig)
-	zapLogger, err := logger.NewZapLogger(loggerConfig, traQBotClient)
+func setupServer(config2 *config) (*server.Server, error) {
+	gorm2Config := provideRepositoryConfig(config2)
+	loggerConfig := provideLoggerConfig(config2)
+	traqBotConfig := provideTraQBotClientConfig(config2)
+	client := traqBot.NewTraQBotClient(traqBotConfig)
+	zapLogger, err := logger.NewZapLogger(loggerConfig, client)
 	if err != nil {
 		return nil, err
 	}
-	gorm2Repository, err := gorm2.NewGorm2Repository(gorm2Config, zapLogger)
+	repository, err := gorm2.NewGorm2Repository(gorm2Config, zapLogger)
 	if err != nil {
 		return nil, err
 	}
-	db, err := gorm2.GetSqlDB(gorm2Repository)
+	db, err := gorm2.GetSQLDb(repository)
 	if err != nil {
 		return nil, err
 	}
@@ -42,9 +42,9 @@ func setupServer(config *Config) (*server.Server, error) {
 		return nil, err
 	}
 	echo := server.NewEcho(store, zapLogger)
-	pingService := ping.NewPingService()
-	grpcServer := server.NewGRPCServer(zapLogger, pingService)
-	serverConfig := provideServerConfig(config)
+	pingServer := ping.NewServer()
+	grpcServer := server.NewGRPCServer(zapLogger, pingServer)
+	serverConfig := provideServerConfig(config2)
 	serverServer := server.NewServer(echo, grpcServer, zapLogger, serverConfig)
 	return serverServer, nil
 }
@@ -52,5 +52,5 @@ func setupServer(config *Config) (*server.Server, error) {
 // wire.go:
 
 var serverSet = wire.NewSet(
-	provideTraQBotClientConfig, traq_bot.NewTraQBotClient, wire.Bind(new(client.BotClient), new(*traq_bot.TraQBotClient)), provideLoggerConfig, logger.NewZapLogger, provideRepositoryConfig, gorm2.NewGorm2Repository, wire.Bind(new(repository.Repository), new(*gorm2.Gorm2Repository)), gorm2.GetSqlDB, ping.NewPingService, wire.Bind(new(protobuf.PingServer), new(*ping.PingService)), server.NewMySQLStore, server.NewEcho, server.NewGRPCServer, provideServerConfig, server.NewServer,
+	provideTraQBotClientConfig, traqBot.NewTraQBotClient, wire.Bind(new(client.BotClient), new(*traqBot.Client)), provideLoggerConfig, logger.NewZapLogger, provideRepositoryConfig, gorm2.NewGorm2Repository, wire.Bind(new(repository.Repository), new(*gorm2.Repository)), gorm2.GetSQLDb, ping.NewServer, wire.Bind(new(protobuf.PingServer), new(*ping.Server)), server.NewMySQLStore, server.NewEcho, server.NewGRPCServer, provideServerConfig, server.NewServer,
 )

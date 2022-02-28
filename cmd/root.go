@@ -8,9 +8,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var cfgFile string // 設定ファイルのパス
+var cfgFile string // cfgFile 設定ファイルのパス
 
-// ルートコマンド - ダミーコマンド
+// rootCmd ダミーコマンド
 var rootCmd = &cobra.Command{
 	Use:  "Q-n-A",
 	Long: "Q'n'A - traP Anonymous Question Box Service",
@@ -30,12 +30,12 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", "", "config file (default is config.json)")
 }
 
-// CLI実行
+// Execute CLI実行
 func Execute() error {
 	return rootCmd.Execute()
 }
 
-// バナーを表示する
+// printBanner バナーを表示する
 func printBanner() {
 	// 文字部
 	fmt.Println("Q'n'A - traP Anonymous Question Box Service")

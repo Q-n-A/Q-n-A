@@ -1,3 +1,5 @@
+// Q'n'A - traP Anonymous Question Box Service
+// traP内部向けの質問箱サービスです。
 package main
 
 import (
@@ -21,8 +23,7 @@ func init() {
 
 func main() {
 	// CLI実行
-	err := cmd.Execute()
-	if err != nil {
+	if err := cmd.Execute(); err != nil {
 		log.Panicf("failed to start Q'n'A application: %v", err)
 	}
 }
