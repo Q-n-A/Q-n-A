@@ -1,5 +1,7 @@
 # Q'n'A - traP Anonymous Question Box Service
 
+[![Go Reference](https://pkg.go.dev/badge/github.com/Q-n-A/Q-n-A.svg)](https://pkg.go.dev/github.com/Q-n-A/Q-n-A)
+
 Backend repository of Q'n'A
 
 - Frontend: [Q'n'A_UI](https://github.com/Q-n-A/Q-n-A_UI)
