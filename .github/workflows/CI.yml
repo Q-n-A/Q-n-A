@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Set Mod Cache
         id: mod-cache
         uses: actions/cache@v2.1.7
@@ -37,7 +37,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Set Protobuf Cache
         id: protobuf-cache
         uses: actions/cache@v2.1.6
@@ -73,7 +73,7 @@ jobs:
     needs: [protobuf]
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Setup Go
         if: steps.mod-cache.outputs.cache-hit != 'true'
         uses: actions/setup-go@v2
@@ -92,7 +92,7 @@ jobs:
     needs: [mod, protobuf]
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Setup Go
         uses: actions/setup-go@v2
         with:
@@ -119,7 +119,7 @@ jobs:
     needs: [mod, protobuf]
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Setup Go
         uses: actions/setup-go@v2
         with:
