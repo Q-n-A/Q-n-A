@@ -9,7 +9,7 @@ services:
     init: true
     volumes:
       - ..:/Q-n-A:cached
-    command: sleep infinity
+    tty: true
     ports:
       - "9001:9001"
       - "9002:6060"
