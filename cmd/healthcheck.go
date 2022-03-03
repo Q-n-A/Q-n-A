@@ -32,7 +32,7 @@ var healthcheckCmd = &cobra.Command{
 		if err != nil {
 			log.Panicf("failed to dial too gRPC server: %v", err)
 		}
-		defer func() { _ = conn.Close() }()
+		defer conn.Close()
 
 		// Pingサービスのクライアントを作成
 		pingClient := protobuf.NewPingClient(conn)
