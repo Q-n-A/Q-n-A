@@ -1,6 +1,6 @@
 # See here for image contents: https://github.com/microsoft/vscode-dev-containers/tree/v0.194.3/containers/ubuntu/.devcontainer/base.Dockerfile
 
-FROM golang:1.17.7 AS builder
+FROM golang:1.18rc1 AS builder
 WORKDIR /temp
 
 RUN apt-get update && apt-get install jq unzip -y --no-install-recommends
@@ -25,7 +25,7 @@ RUN  go install google.golang.org/protobuf/cmd/protoc-gen-go@latest && \
   go install github.com/k1LoW/tbls@main && \
   go install github.com/fullstorydev/grpcurl/cmd/grpcurl@latest
 
-FROM golang:1.17.7 AS devcontainer
+FROM golang:1.18rc1 AS devcontainer
 
 ENV TZ=Asia/Tokyo
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
