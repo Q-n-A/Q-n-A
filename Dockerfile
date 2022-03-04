@@ -1,4 +1,4 @@
-FROM golang:1.17.7 AS builder
+FROM golang:1.17.7 AS protoc
 WORKDIR /temp
 
 RUN apt-get update && apt-get install jq unzip -y --no-install-recommends
@@ -9,6 +9,11 @@ RUN URI=$(wget -O - -q https://api.github.com/repos/protocolbuffers/protobuf/rel
   wget --progress=dot:giga "$URI" -O "protobuf.zip" && \
   unzip -o protobuf.zip -d protobuf && \
   chmod -R 755 protobuf/*
+
+FROM golang:1.17.7 AS builder
+WORKDIR /temp
+
+COPY --from=protoc /temp/protobuf /temp/protobuf/
 ENV PATH $PATH:/temp/protobuf/bin
 
 RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@latest && \
