@@ -1,5 +1,7 @@
-// Q'n'A - traP Anonymous Question Box Service
-// traP内部向けの質問箱サービスです。
+/*
+Q'n'A - traP Anonymous Question Box Service
+traP内部向けの質問箱サービスです。
+*/
 package main
 
 import (
