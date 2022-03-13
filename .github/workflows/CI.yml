@@ -136,3 +136,21 @@ jobs:
           key: protobuf-${{ hashFiles('**/*.proto') }}
       - name: Run Test
         run: go test ./... -v
+  docker-lint:
+    name: Docker Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - uses: hadolint/hadolint-action@v1.6.0
+        with:
+          dockerfile: ./Dockerfile
+      - uses: hadolint/hadolint-action@v1.6.0
+        with:
+          dockerfile: ./.devcontainer/Dockerfile
+      - uses: hadolint/hadolint-action@v1.6.0
+        with:
+          dockerfile: ./dev/Dockerfile
+      - uses: hadolint/hadolint-action@v1.6.0
+        with:
+          dockerfile: ./dev/frontend/Dockerfile
