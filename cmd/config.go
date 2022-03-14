@@ -46,7 +46,6 @@ type config struct {
 		Password string `mapstructure:"password"` // DBのパスワード (default: "password")
 		Database string `mapstructure:"database"` // DBのDB名 (default: "Q-n-A")
 	} `mapstructure:"mariadb"` // MariaDB用設定
-
 }
 
 // provideRepositoryConfig Gorm v2リポジトリ用設定の提供
