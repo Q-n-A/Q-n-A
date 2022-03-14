@@ -29,10 +29,10 @@ type config struct {
 		NotificationChannel string `mapstructure:"notification_channel"` // 通知投稿チャンネル (default: "")
 	} `mapstructure:"bot"` // Bot用設定
 
-	Client struct {
+	OAuth struct {
 		ID    string `mapstructure:"id"`     // 本番環境向けのクライアントID (default: "")
 		DevID string `mapstructure:"dev_id"` // ローカル開発環境向けのクライアントID (default: "")
-	} `mapstructure:"client"` // OAuthクライアント用設定
+	} `mapstructure:"oauth"` // OAuthクライアント用設定
 
 	Server struct {
 		GRPCAddr string `mapstructure:"grpc_addr"` // gRPCサーバーがリッスンするアドレス (default: :9001)
@@ -95,8 +95,8 @@ func loadConfig(cfgFile string) error {
 	viper.SetDefault("bot.log_channel", "")
 	viper.SetDefault("bot.notification_channel", "")
 
-	viper.SetDefault("client.id", "")
-	viper.SetDefault("client.dev_id", "")
+	viper.SetDefault("oauth.id", "")
+	viper.SetDefault("oauth.dev_id", "")
 
 	viper.SetDefault("server.grpc_addr", ":9001")
 	viper.SetDefault("server.rest_addr", ":9000")
@@ -118,7 +118,7 @@ func loadConfig(cfgFile string) error {
 		// デフォルトの設定ファイルをセット
 		viper.AddConfigPath(".")
 		viper.SetConfigName("config")
-		viper.SetConfigType("json")
+		viper.SetConfigType("yaml")
 	}
 
 	// 設定ファイルの読み込み
