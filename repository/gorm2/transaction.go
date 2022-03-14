@@ -3,6 +3,7 @@ package gorm2
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 
 	"gorm.io/gorm"
@@ -12,7 +13,7 @@ type ctxKey string // ctxKey contextに格納するDBインスタンスのkey型
 
 const txKey ctxKey = "transaction" // txKey contextに格納するDBインスタンスのkey
 
-var errorDBCastFailed = fmt.Errorf("failed to cast DB instance to *gorm.DB") // 型キャスト失敗エラー
+var errorDBCastFailed = errors.New("failed to cast DB instance to *gorm.DB") // 型キャスト失敗エラー
 
 // Do Transactionの中でメソッドを実行する
 func (repo *Repository) Do(ctx context.Context, options *sql.TxOptions, callBack func(context.Context) error) error {
