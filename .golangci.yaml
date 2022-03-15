@@ -76,6 +76,7 @@ linters:
 linters-settings:
   gosec:
     excludes:
+      - G104
       - G108
   lll:
     line-length: 150
