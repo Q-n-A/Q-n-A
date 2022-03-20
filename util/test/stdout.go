@@ -9,7 +9,7 @@ import (
 )
 
 // PickStdout 渡された関数のstdoutへの出力を取得する
-func PickStdout(t *testing.T, fnc func()) string {
+func PickStdout(t *testing.T, callback func()) string {
 	t.Helper()
 
 	backup := os.Stdout
@@ -22,7 +22,7 @@ func PickStdout(t *testing.T, fnc func()) string {
 
 	os.Stdout = w
 
-	fnc()
+	callback()
 
 	err = w.Close()
 	assert.NoError(t, err)
