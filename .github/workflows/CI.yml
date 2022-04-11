@@ -26,7 +26,7 @@ jobs:
           key: mod-${{ hashFiles('**/go.sum') }}
       - name: Setup Go
         if: steps.mod-cache.outputs.cache-hit != 'true'
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         with:
           go-version: ${{ env.GO_VERSION }}
       - name: Module Download
@@ -56,7 +56,7 @@ jobs:
         uses: arduino/setup-protoc@v1
       - name: Setup Go
         if: steps.protobuf-cache.outputs.cache-hit != 'true' && steps.tools-cache.outputs.cache-hit != 'true'
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         with:
           go-version: ${{ env.GO_VERSION }}
       - name: Install Tools
@@ -76,7 +76,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Setup Go
         if: steps.mod-cache.outputs.cache-hit != 'true'
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         with:
           go-version: ${{ env.GO_VERSION }}
       - name: Set Protobuf Cache
@@ -94,7 +94,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Setup Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         with:
           go-version: ${{ env.GO_VERSION }}
       - name: Set Mod Cache
@@ -121,7 +121,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Setup Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         with:
           go-version: ${{ env.GO_VERSION }}
       - name: Set Mod Cache
