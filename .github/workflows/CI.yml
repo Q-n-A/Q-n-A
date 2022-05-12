@@ -85,7 +85,7 @@ jobs:
           path: ./server/protobuf
           key: protobuf-${{ hashFiles('**/*.proto') }}
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v3.1.0
+        uses: golangci/golangci-lint-action@v3.2.0
   build:
     name: Build
     runs-on: ubuntu-latest
