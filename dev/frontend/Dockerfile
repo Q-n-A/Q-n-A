@@ -1,4 +1,4 @@
-FROM node:16.14.2 AS builder
+FROM node:18.2.0 AS builder
 WORKDIR /temp
 
 RUN apt-get update && apt-get install jq unzip -y --no-install-recommends
